@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Répertoire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #08080E;
+  --surface: #0F0F1A;
+  --card:    #131320;
+  --card-h:  #191929;
+  --line:    #1C1C2E;
+  --line2:   #242438;
+  --txt:     #EEEAF8;
+  --txt2:    #7B78A0;
+  --txt3:    #3D3B55;
+
+  --c-jeux:  #22D3EE;
+  --c-film:  #F472B6;
+  --c-hard:  #FB923C;
+  --c-steam: #818CF8;
+  --c-outil: #34D399;
+  --c-perso: #FCD34D;
+  --c-ext:   #C084FC;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(8,8,14,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center;
+  padding: 0 32px; height: 64px;
+  gap: 2px;
+  /* FIXED: no overflow hidden, let it wrap or use wider padding */
+}
+
+.nav-logo {
+  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 17px;
+  color: var(--txt); letter-spacing: -0.5px;
+  margin-right: 20px; white-space: nowrap; flex-shrink: 0;
+}
+.nav-logo span { color: var(--txt3); font-weight: 400; }
+
+.nav-tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 12px; height: 100%;
+  font-size: 12.5px; font-weight: 500; color: var(--txt3);
+  cursor: pointer; border: none; background: none;
+  white-space: nowrap; border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  font-family: 'Inter', sans-serif;
+  flex-shrink: 0;
+}
+.nav-tab:hover { color: var(--txt2); }
+.nav-tab.active { color: var(--txt); border-bottom-color: currentColor; }
+.nav-tab[data-id="jeux"].active    { color: var(--c-jeux); }
+.nav-tab[data-id="films"].active   { color: var(--c-film); }
+.nav-tab[data-id="hardware"].active{ color: var(--c-hard); }
+.nav-tab[data-id="steam"].active   { color: var(--c-steam); }
+.nav-tab[data-id="outils"].active  { color: var(--c-outil); }
+.nav-tab[data-id="perso"].active   { color: var(--c-perso); }
+.nav-tab[data-id="ext"].active     { color: var(--c-ext); }
+
+.tab-dot { width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0;transition:opacity .15s;flex-shrink:0; }
+.nav-tab.active .tab-dot { opacity:1; }
+
+/* ── SEARCH ── */
+.search-zone { padding: 24px 32px 0; }
+.search-inner { max-width: 480px; position: relative; }
+.search-inner svg { position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none; }
+#search {
+  width:100%; background:var(--surface); border:1px solid var(--line2);
+  border-radius:10px; padding:10px 14px 10px 38px; color:var(--txt);
+  font-size:13px; font-family:'Inter',sans-serif; outline:none;
+  transition:border-color .15s, box-shadow .15s;
+}
+#search:focus { box-shadow:0 0 0 3px rgba(255,255,255,0.04); }
+#search::placeholder { color:var(--txt3); }
+.search-meta { margin-top:8px;font-size:11.5px;color:var(--txt3);font-family:'JetBrains Mono',monospace; }
+
+/* ── LAYOUT ── */
+.page { padding: 32px 32px 80px; }
+
+/* ── SECTION ── */
+.cat-section { margin-bottom: 52px; scroll-margin-top: 80px; }
+.cat-section[hidden] { display: none !important; }
+.cat-header { display:flex;align-items:baseline;gap:12px;margin-bottom:20px; }
+.cat-title { font-family:'Outfit',sans-serif;font-weight:700;font-size:22px;letter-spacing:-0.5px;color:var(--txt);line-height:1; }
+.cat-accent-bar { height:3px;width:24px;border-radius:2px;display:inline-block;margin-bottom:3px;flex-shrink:0; }
+.cat-count { font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--txt3);margin-left:auto; }
+
+/* ── GRID ── */
+.sub-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px; }
+.sub-grid.wide { grid-template-columns:1fr; }
+.sub-block { background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px; }
+.sub-label { font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:2px; }
+
+/* ── LINK ── */
+.link-item {
+  display:flex; align-items:center; gap:9px;
+  padding:7px 8px; border-radius:7px;
+  text-decoration:none; color:var(--txt2);
+  font-size:12.5px; transition:background .12s, color .12s;
+  border:1px solid transparent; position:relative; cursor:pointer;
+}
+.link-item:hover { background:var(--card-h); border-color:var(--line2); }
+.link-favicon { width:16px; height:16px; border-radius:3px; flex-shrink:0; object-fit:contain; background:var(--line2); }
+.link-favicon.err { display:none; }
+.link-emoji-fb { font-size:13px; flex-shrink:0; width:16px; text-align:center; display:none; }
+.link-favicon.err + .link-emoji-fb { display:inline; }
+
+.cat-section[data-id="jeux"]     .link-item:hover { color:var(--c-jeux); }
+.cat-section[data-id="films"]    .link-item:hover { color:var(--c-film); }
+.cat-section[data-id="hardware"] .link-item:hover { color:var(--c-hard); }
+.cat-section[data-id="steam"]    .link-item:hover { color:var(--c-steam); }
+.cat-section[data-id="outils"]   .link-item:hover { color:var(--c-outil); }
+.cat-section[data-id="perso"]    .link-item:hover { color:var(--c-perso); }
+.cat-section[data-id="ext"]      .link-item:hover { color:var(--c-ext); }
+
+.star-badge { margin-left:auto;font-size:9px;font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--c-perso);opacity:.5;white-space:nowrap; }
+.link-item.dim { opacity:.12; pointer-events:none; }
+
+/* ── TOOLTIP ── */
+#tip {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+  transition: opacity 0.16s ease, transform 0.16s ease;
+  width: 300px;
+}
+#tip.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.tip-shell {
+  background: #0D0D1C;
+  border: 1px solid #28283E;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+/* browser chrome */
+.tip-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px;
+  background: #0A0A16;
+  border-bottom: 1px solid #1C1C2E;
+}
+.tip-dots { display:flex;gap:5px;flex-shrink:0; }
+.tip-dots span { width:8px;height:8px;border-radius:50%; }
+.tip-dots span:nth-child(1) { background:#3D1C1C; }
+.tip-dots span:nth-child(2) { background:#2E2E1A; }
+.tip-dots span:nth-child(3) { background:#1A2E1A; }
+.tip-addr {
+  flex:1; background:#131324; border:1px solid #1C1C2E;
+  border-radius:6px; padding:4px 10px;
+  font-family:'JetBrains Mono',monospace; font-size:10px; color:#4A4870;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+
+/* body */
+.tip-body { padding: 16px; }
+
+.tip-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+
+/* FIXED: icône fixe 20x20, pas d'image agrandie */
+.tip-icon {
+  width:20px; height:20px;
+  border-radius:4px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; overflow:hidden;
+  background: transparent;
+}
+.tip-icon img {
+  width:16px; height:16px;
+  object-fit:contain;
+  image-rendering:crisp-edges;
+}
+.tip-icon .tip-icon-emoji { font-size:14px; line-height:1; }
+
+.tip-name { font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;color:var(--txt);line-height:1.2; }
+.tip-host { font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--txt3);margin-top:2px; }
+
+.tip-desc {
+  font-size:12px; color:var(--txt2); line-height:1.6;
+  border-top:1px solid var(--line);
+  padding-top:10px;
+}
+
+.tip-tags { display:flex;gap:6px;flex-wrap:wrap;margin-top:10px; }
+.tip-tag {
+  font-size:10px; font-family:'JetBrains Mono',monospace;
+  padding:3px 8px; border-radius:4px;
+  background:var(--line); color:var(--txt3);
+}
+
+/* ── EMPTY ── */
+.empty-state { display:none;flex-direction:column;align-items:center;gap:10px;padding:80px 0;color:var(--txt3);font-size:13px; }
+.empty-state.show { display:flex; }
+.empty-glyph { font-size:28px;font-family:'JetBrains Mono',monospace;color:var(--line2); }
+
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
+
+@media(max-width:600px){
+  nav{padding:0 16px;height:56px;overflow-x:auto;scrollbar-width:none;}
+  nav::-webkit-scrollbar{display:none;}
+  .search-zone,.page{padding-left:16px;padding-right:16px}
+  .sub-grid{grid-template-columns:1fr}
+  #tip{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOOLTIP -->
+<div id="tip">
+  <div class="tip-shell">
+    <div class="tip-bar">
+      <div class="tip-dots"><span></span><span></span><span></span></div>
+      <div class="tip-addr" id="tip-addr"></div>
+    </div>
+    <div class="tip-body">
+      <div class="tip-head">
+        <div class="tip-icon" id="tip-icon">
+          <img id="tip-fav" src="" alt="">
+        </div>
+        <div>
+          <div class="tip-name" id="tip-name"></div>
+          <div class="tip-host" id="tip-host"></div>
+        </div>
+      </div>
+      <div class="tip-desc" id="tip-desc"></div>
+      <div class="tip-tags" id="tip-tags"></div>
+    </div>
+  </div>
+</div>
+
+<nav>
+  <span class="nav-logo">répertoire<span>.</span></span>
+  <button class="nav-tab active" data-id="all"      onclick="setTab('all')"><span class="tab-dot"></span>Tout</button>
+  <button class="nav-tab"        data-id="jeux"     onclick="setTab('jeux')"><span class="tab-dot"></span>Jeux</button>
+  <button class="nav-tab"        data-id="films"    onclick="setTab('films')"><span class="tab-dot"></span>Films &amp; Séries</button>
+  <button class="nav-tab"        data-id="hardware" onclick="setTab('hardware')"><span class="tab-dot"></span>Hardware</button>
+  <button class="nav-tab"        data-id="steam"    onclick="setTab('steam')"><span class="tab-dot"></span>Steam</button>
+  <button class="nav-tab"        data-id="outils"   onclick="setTab('outils')"><span class="tab-dot"></span>Outils</button>
+  <button class="nav-tab"        data-id="perso"    onclick="setTab('perso')"><span class="tab-dot"></span>Mes projets</button>
+  <button class="nav-tab"        data-id="ext"      onclick="setTab('ext')"><span class="tab-dot"></span>Extensions</button>
+</nav>
+
+<div class="search-zone">
+  <div class="search-inner">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input id="search" type="text" placeholder="Rechercher…" oninput="doSearch(this.value)" autocomplete="off" spellcheck="false">
+  </div>
+  <p class="search-meta" id="meta">— <span id="total"></span> liens indexés</p>
+</div>
+
+<div class="page">
+
+  <!-- JEUX -->
+  <section class="cat-section" data-id="jeux" id="s-jeux">
+    <div class="cat-header">
+      <span class="cat-accent-bar" style="background:var(--c-jeux)"></span>
+      <h2 class="cat-title">Jeux</h2>
+      <span class="cat-count" id="cnt-jeux"></span>
+    </div>
+    <div class="sub-grid">
+      <div class="sub-block">
+        <div class="sub-label">Infos &amp; Actualités</div>
+        <a class="link-item" href="https://gamestatus.info/en" target="_blank" rel="noopener"
+           data-desc="Statut des cracks de jeux PC et calendrier des prochaines sorties crackées." data-tags="crack,pc,releases"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=gamestatus.info&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📋</span>Crack Status</a>
+        <a class="link-item" href="https://news.instant-gaming.com/fr" target="_blank" rel="noopener"
+           data-desc="Actualités gaming par Instant Gaming — soldes, sorties, bons plans jeux PC et consoles." data-tags="news,gaming,soldes"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=instant-gaming.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📰</span>News Instant Gaming</a>
+        <a class="link-item" href="https://crackwatcher.com/" target="_blank" rel="noopener"
+           data-desc="Suivi en temps réel des jeux crackés ou en attente de crack, avec historique des groupes." data-tags="crack,watcher,pc"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=crackwatcher.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">👁️</span>CrackWatcher</a>
+        <a class="link-item" href="https://predb.net/" target="_blank" rel="noopener"
+           data-desc="Répertoire des releases crackées — base de données complète des sorties de la scène." data-tags="releases,scène,db"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=predb.net&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗂️</span>PreDB</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">MegaThread</div>
+        <a class="link-item" href="https://r-roms.github.io/" target="_blank" rel="noopener"
+           data-desc="Index complet de ROMs rétro — NES, SNES, PS1, N64 et bien plus, organisé par plateforme." data-tags="roms,rétro,emulation"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=github.io&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📦</span>Retro Games</a>
+        <a class="link-item" href="https://rentry.org/pgames#direct-download-ddl-sites" target="_blank" rel="noopener"
+           data-desc="Méga liste de sites DDL et torrents pour jeux PC — la référence piratage gaming." data-tags="ddl,torrent,pc,piratage"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=rentry.org&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📋</span>Games Mega Thread</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Ressources &amp; Archives</div>
+        <a class="link-item" href="https://valvearchive.com/" target="_blank" rel="noopener"
+           data-desc="Archive historique de Valve — builds anciens de Steam, Half-Life, TF2 et autres jeux Valve." data-tags="valve,archive,history"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=valvearchive.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏛️</span>Valve Archive</a>
+        <a class="link-item" href="https://archive.thedatadungeon.com/" target="_blank" rel="noopener"
+           data-desc="Archive de données de jeux vidéo — fichiers, assets, builds anciens et ressources diverses." data-tags="archive,assets,data"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=thedatadungeon.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗄️</span>The Data Dungeon</a>
+        <a class="link-item" href="https://models.spriters-resource.com/" target="_blank" rel="noopener"
+           data-desc="Base de modèles 3D extraits de jeux vidéo — personnages, objets, environnements téléchargeables." data-tags="3D,models,assets"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=spriters-resource.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎮</span>Models Resource</a>
+        <a class="link-item" href="https://www.spriters-resource.com/" target="_blank" rel="noopener"
+           data-desc="La plus grande base de sprites de jeux vidéo — sheets PNG extraites de milliers de titres." data-tags="sprites,sheets,assets"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=spriters-resource.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖼️</span>Spriters Resource</a>
+        <a class="link-item" href="https://www.miicharacters.com/" target="_blank" rel="noopener"
+           data-desc="Galerie et éditeur de Miis — personnages célèbres recréés en Mii à télécharger ou partager." data-tags="mii,wii,nintendo"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=miicharacters.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">👾</span>Mii Characters</a>
+        <a class="link-item" href="https://libraryofcodexes.com/" target="_blank" rel="noopener"
+           data-desc="Collection de codex in-game — lore, bestiaires et encyclopédies tirés de jeux comme TES ou Mass Effect." data-tags="lore,codex,wiki"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=libraryofcodexes.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📚</span>Library of Codexes</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Cartes &amp; Guides</div>
+        <a class="link-item" href="https://mapgenie.io/" target="_blank" rel="noopener"
+           data-desc="Cartes interactives pour jeux vidéo — collectibles, missions, secrets tracés sur la map." data-tags="map,guide,collectibles"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=mapgenie.io&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗺️</span>MapGenie</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Jeu en ligne &amp; Social</div>
+        <a class="link-item" href="https://gam.onl/" target="_blank" rel="noopener"
+           data-desc="Jeux navigateur en ligne — catalogue de mini-jeux jouables directement sans installation." data-tags="browser,online,gratuit"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=gam.onl&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🌐</span>GameOnline</a>
+        <a class="link-item" href="https://buzzin.live/" target="_blank" rel="noopener"
+           data-desc="Buzzer en ligne pour jeux de quiz — crée une salle, partage le lien, chacun buzzotte depuis son téléphone." data-tags="quiz,buzzer,live,multijoueur"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=buzzin.live&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔔</span>Buzzin — Buzzer en ligne</a>
+        <a class="link-item" href="https://challonge.com/fr" target="_blank" rel="noopener"
+           data-desc="Création et gestion de brackets de tournoi — simple, gratuit, pour n'importe quel jeu ou sport." data-tags="tournoi,bracket,esport"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=challonge.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏆</span>Challonge — Tournois</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Bons Plans &amp; Autre</div>
+        <a class="link-item" href="https://isthereanydeal.com/" target="_blank" rel="noopener"
+           data-desc="Comparateur de prix de jeux PC — historique des prix, alertes et meilleures promos sur toutes les boutiques." data-tags="prix,soldes,promo,steam"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=isthereanydeal.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏷️</span>IsThereAnyDeal</a>
+        <a class="link-item" href="https://mega.nz/file/R4pxBYZa#aYnBbWu_pyDrokT8J1GUmDGL8RmtqHJ8AOchdOIZolY" target="_blank" rel="noopener"
+           data-desc="Archive ZIP de torrents de jeux — collection hébergée sur Mega." data-tags="torrent,archive,mega"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=mega.nz&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗜️</span>Archive Torrent ZIP</a>
+        <a class="link-item" href="https://rebrickable.com/build/" target="_blank" rel="noopener"
+           data-desc="Trouve ce que tu peux construire avec tes pièces LEGO — base de données de sets et MOCs." data-tags="lego,moc,build"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=rebrickable.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🧱</span>Rebrickable — LEGO Build</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FILMS -->
+  <section class="cat-section" data-id="films" id="s-films">
+    <div class="cat-header">
+      <span class="cat-accent-bar" style="background:var(--c-film)"></span>
+      <h2 class="cat-title">Films &amp; Séries</h2>
+      <span class="cat-count" id="cnt-films"></span>
+    </div>
+    <div class="sub-grid">
+      <div class="sub-block">
+        <div class="sub-label">Streaming</div>
+        <a class="link-item" href="https://movix.cash/" target="_blank" rel="noopener"
+           data-desc="Streaming gratuit de films et séries en HD — VF, VOSTFR, catalogue complet avec watch party." data-tags="streaming,vf,vostfr,gratuit"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=movix.cash&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">▶️</span>Movix</a>
+        <a class="link-item" href="https://hydracker.com/" target="_blank" rel="noopener"
+           data-desc="DarkiWorld — streaming et téléchargement de films et séries, nombreuses sources disponibles." data-tags="streaming,ddl,darkiworld"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=hydracker.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">⬇️</span>Hydracker (DarkiWorld)</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">MegaThread</div>
+        <a class="link-item" href="https://fmhy.pages.dev/non-english" target="_blank" rel="noopener"
+           data-desc="FMHY section multilingue — liste exhaustive de ressources streaming et téléchargement hors anglais." data-tags="fmhy,streaming,multilangue"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=fmhy.pages.dev&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🌍</span>FMHY Multilangue</a>
+        <a class="link-item" href="https://fmhy.pages.dev/non-english#french-francais" target="_blank" rel="noopener"
+           data-desc="Section française du FMHY — sites de streaming et DDL en VF recommandés par la communauté." data-tags="fmhy,français,vf"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=fmhy.pages.dev&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🇫🇷</span>FMHY FR</a>
+        <a class="link-item" href="https://rentry.co/zdno5k4z" target="_blank" rel="noopener"
+           data-desc="Mega thread Rentry de films et séries — liens directs et torrents organisés par catégorie." data-tags="rentry,films,séries"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=rentry.co&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📋</span>Rentry Mega Thread</a>
+        <a class="link-item" href="https://theindex.moe/library/anime" target="_blank" rel="noopener"
+           data-desc="Index anime complet — sites de streaming légaux et non-officiels classés par qualité et langue." data-tags="anime,index,streaming"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=theindex.moe&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">✨</span>Anime Mega Thread</a>
+        <a class="link-item" href="https://pastebin.com/SuwS6kri" target="_blank" rel="noopener"
+           data-desc="MegaMegaThread — compilation ultime de ressources films, séries, anime et plus." data-tags="pastebin,mega,films"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=pastebin.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📎</span>MegaMegaThread</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Visuels &amp; Suivi</div>
+        <a class="link-item" href="https://www.movieposterdb.com/" target="_blank" rel="noopener"
+           data-desc="Base de données d'affiches de films en haute résolution — parfait pour les montages et collections." data-tags="affiches,posters,hd"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=movieposterdb.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖼️</span>MoviePosterDB</a>
+        <a class="link-item" href="https://film-grab.com/" target="_blank" rel="noopener"
+           data-desc="Captures d'écran artistiques de films — frames soigneusement sélectionnées pour leur composition." data-tags="frames,cinéma,shots"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=film-grab.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📷</span>FilmGrab</a>
+        <a class="link-item" href="https://letterboxd.com/" target="_blank" rel="noopener"
+           data-desc="Réseau social de cinéphiles — journal de films, notes, listes et critiques. Le Goodreads du ciné." data-tags="films,journal,social,critiques"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=letterboxd.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎞️</span>Letterboxd</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- HARDWARE -->
+  <section class="cat-section" data-id="hardware" id="s-hardware">
+    <div class="cat-header">
+      <span class="cat-accent-bar" style="background:var(--c-hard)"></span>
+      <h2 class="cat-title">Hardware</h2>
+      <span class="cat-count" id="cnt-hardware"></span>
+    </div>
+    <div class="sub-grid">
+      <div class="sub-block">
+        <div class="sub-label">Benchmarks &amp; Tier Lists</div>
+        <a class="link-item" href="https://docs.google.com/spreadsheets/d/1NMDwOkn3uynv7aIBZxrIl9kLiV7t9OXJJIFySD-pOrY/edit?gid=2062135880#gid=2062135880" target="_blank" rel="noopener"
+           data-desc="Spreadsheet communautaire comparant souris, tapis, manchettes et IEM pour le gaming compétitif." data-tags="souris,tapis,iem,peripheriques"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖱️</span>Test Souris / Tapis / IEM</a>
+        <a class="link-item" href="https://docs.google.com/spreadsheets/d/1CVS1pg1Ln8q52f6vPV45PTQZCUjB33-FugqLhwpND3A/edit?gid=0#gid=0" target="_blank" rel="noopener"
+           data-desc="Comparatif détaillé des SSD — vitesses séquentielles, aléatoires, températures et rapport qualité/prix." data-tags="ssd,stockage,benchmark"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💾</span>SSD Comparaison</a>
+        <a class="link-item" href="https://docs.google.com/spreadsheets/d/1wAcWruFXxGAw0ckt8sn_YaajzSLOdG7vq1WmmEwwo3c/edit?gid=1719706335#gid=1719706335" target="_blank" rel="noopener"
+           data-desc="Tier list des alimentations PC — classement par fiabilité, protection et qualité des rails." data-tags="psu,alimentation,tier"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">⚡</span>Tierlist Alimentation PC</a>
+        <a class="link-item" href="https://docs.google.com/spreadsheets/d/1H_ZJVRr_1yr8dnUE2FlrUMaWectzKoLhzXMQQoPJGmk/edit?gid=757992332#gid=757992332" target="_blank" rel="noopener"
+           data-desc="Benchmark GPU comparatif — performances en jeu, rasterisation et ray tracing par carte graphique." data-tags="gpu,benchmark,graphique"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎮</span>Test GPU</a>
+        <a class="link-item" href="https://www.systemrequirementslab.com/cyri" target="_blank" rel="noopener"
+           data-desc="Vérifie si ton PC peut faire tourner un jeu — analyse automatique de ta config vs les prérequis." data-tags="config,prérequis,pc"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=systemrequirementslab.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">✅</span>CanYouRunIt</a>
+        <a class="link-item" href="https://mousectrl.com/mousepads" target="_blank" rel="noopener"
+           data-desc="Comparatif et guide d'achat de tapis de souris gaming — surface, vitesse, taille et revêtement." data-tags="tapis,souris,gaming"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=mousectrl.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖱️</span>MouseCtrl — Tapis de souris</a>
+        <a class="link-item" href="https://pcie-simulator.vercel.app/" target="_blank" rel="noopener"
+           data-desc="Simulateur PCIe interactif — visualise les lanes, la bande passante et la compatibilité des slots." data-tags="pcie,pc,motherboard,simulation"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=pcie-simulator.vercel.app&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔌</span>PCIe Simulator</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEAM -->
+  <section class="cat-section" data-id="steam" id="s-steam">
+    <div class="cat-header">
+      <span class="cat-accent-bar" style="background:var(--c-steam)"></span>
+      <h2 class="cat-title">Steam</h2>
+      <span class="cat-count" id="cnt-steam"></span>
+    </div>
+    <div class="sub-grid">
+      <div class="sub-block">
+        <div class="sub-label">Outils</div>
+        <a class="link-item" href="https://steambrew.app/" target="_blank" rel="noopener"
+           data-desc="Millenium — client Steam moddé avec thèmes et plugins, remplaçant de SFP." data-tags="steam,thèmes,mods,client"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steambrew.app&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎨</span>SteamBrew – Millenium</a>
+        <a class="link-item" href="https://github.com/Depressurizer/Depressurizer" target="_blank" rel="noopener"
+           data-desc="Gestionnaire de bibliothèque Steam — trie et catégorise automatiquement tes jeux par genre, tags." data-tags="steam,library,organisation"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=github.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏷️</span>Depressurizer</a>
+        <a class="link-item" href="https://steamdb.info/" target="_blank" rel="noopener"
+           data-desc="Base de données Steam complète — historique des prix, packages, builds et infos cachées." data-tags="steam,db,prix,historique"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steamdb.info&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗄️</span>SteamDB</a>
+        <a class="link-item" href="https://steamstat.us/" target="_blank" rel="noopener"
+           data-desc="Statut en temps réel des serveurs Steam — voir si Steam est down ou si c'est ton côté." data-tags="steam,status,serveurs"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steamstat.us&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📡</span>SteamStatus</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Découverte &amp; Stats</div>
+        <a class="link-item" href="https://steamladder.com/" target="_blank" rel="noopener"
+           data-desc="Classement Steam mondial et par pays — compare ta valeur de bibliothèque et tes achievements." data-tags="steam,ranking,stats"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steamladder.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏆</span>SteamLadder</a>
+        <a class="link-item" href="https://steampeek.hu/" target="_blank" rel="noopener"
+           data-desc="Découverte de jeux Steam — trouve des jeux similaires à ce que tu aimes, filtres avancés." data-tags="steam,découverte,similaire"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steampeek.hu&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔍</span>Steampeek</a>
+        <a class="link-item" href="https://nodal.gg/" target="_blank" rel="noopener"
+           data-desc="Trouve des jeux similaires à n'importe quel titre — moteur de recommandation basé sur les tags Steam." data-tags="steam,similaire,recommandation"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=nodal.gg&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔗</span>Nodal — Jeux similaires</a>
+        <a class="link-item" href="https://www.letsplayindex.com/" target="_blank" rel="noopener"
+           data-desc="Index de let's plays — trouve des vidéos de gameplay pour n'importe quel jeu, par créateur ou plateforme." data-tags="lets play,youtube,gameplay"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=letsplayindex.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎬</span>Let's Play Index</a>
+        <a class="link-item" href="https://howlongtobeat.com/" target="_blank" rel="noopener"
+           data-desc="Durée de vie des jeux — combien d'heures pour finir l'histoire, à 100%, ou en speedrun." data-tags="durée,hltb,completion"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=howlongtobeat.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">⏱️</span>HowLongToBeat</a>
+        <a class="link-item" href="https://backloggd.com/" target="_blank" rel="noopener"
+           data-desc="Suivi de ta bibliothèque de jeux — backlog, wishlist, notes et journal de gaming social." data-tags="backlog,gaming,suivi,social"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=backloggd.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📝</span>Backloggd</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUTILS -->
+  <section class="cat-section" data-id="outils" id="s-outils">
+    <div class="cat-header">
+      <span class="cat-accent-bar" style="background:var(--c-outil)"></span>
+      <h2 class="cat-title">Outils</h2>
+      <span class="cat-count" id="cnt-outils"></span>
+    </div>
+    <div class="sub-grid">
+      <div class="sub-block">
+        <div class="sub-label">Édition graphique</div>
+        <a class="link-item" href="https://www.photopea.com/" target="_blank" rel="noopener"
+           data-desc="Photoshop gratuit dans le navigateur — supporte les fichiers PSD, XCF, Sketch et plus." data-tags="photoshop,édition,psd,gratuit"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=photopea.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖼️</span>Photopea</a>
+        <a class="link-item" href="https://www.canva.com/fr_be/" target="_blank" rel="noopener"
+           data-desc="Outil de design graphique en ligne — templates, présentations, posts réseaux sociaux et plus." data-tags="design,templates,graphisme"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=canva.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖌️</span>Canva</a>
+        <a class="link-item" href="https://pixlr.com/fr/" target="_blank" rel="noopener"
+           data-desc="Éditeur photo en ligne avec IA — retouche, collages, effets et suppression d'arrière-plan." data-tags="photo,édition,ia"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=pixlr.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">✨</span>Pixlr</a>
+        <a class="link-item" href="https://stamplab.javii.tools/" target="_blank" rel="noopener"
+           data-desc="Crée de faux affichages de messages (Discord, SMS, etc.) en PNG — idéal pour les montages et memes." data-tags="montage,faux,messages,png"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=javii.tools&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💬</span>StampLab — Faux messages</a>
+        <a class="link-item" href="https://www.blueprint.am/" target="_blank" rel="noopener"
+           data-desc="Outil IA de conception hardware — génère des schémas de câblage, listes de matériel et guides d'assemblage depuis une simple description." data-tags="ia,hardware,electronique,arduino,raspberry,schéma,design"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=blueprint.am&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📐</span>Blueprint.am</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Audio</div>
+        <a class="link-item" href="https://vocalremover.org/fr/" target="_blank" rel="noopener"
+           data-desc="Sépare les voix de la musique avec l'IA — extrait instrumentales, stems et voix en quelques secondes." data-tags="audio,vocal,stems,ia"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=vocalremover.org&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎙️</span>Vocal Remover</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Gaming</div>
+        <a class="link-item" href="https://csgoskins.gg/" target="_blank" rel="noopener"
+           data-desc="Marché CS2 — prix des skins en temps réel, historique, wear et comparaisons entre plateformes." data-tags="cs2,skins,marché,prix"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=csgoskins.gg&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔫</span>CS2 Market</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Utilitaires web</div>
+        <a class="link-item" href="https://humanbenchmark.com/" target="_blank" rel="noopener"
+           data-desc="Tests de performance humaine — temps de réaction, mémoire, frappe, vision et plus." data-tags="benchmark,réaction,tests"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=humanbenchmark.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🧠</span>HumanBenchmark</a>
+        <a class="link-item" href="https://downdetector.fr/" target="_blank" rel="noopener"
+           data-desc="Détecte les pannes de services en temps réel — Steam, Discord, PSN, banques et plus." data-tags="panne,status,services"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=downdetector.fr&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📶</span>Downdetector</a>
+        <a class="link-item" href="https://pimeyes.com/en" target="_blank" rel="noopener"
+           data-desc="Moteur de recherche faciale inversée — trouve où une photo de visage apparaît sur internet." data-tags="visage,recherche,image,ia"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=pimeyes.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">👁️</span>PimEyes</a>
+        <a class="link-item" href="https://www.dealabs.com/" target="_blank" rel="noopener"
+           data-desc="Communauté de bons plans — promos, codes promo et ventes flash signalées par les membres." data-tags="promos,deals,bons plans"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=dealabs.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💸</span>Dealabs</a>
+        <a class="link-item" href="https://delphi.tools/" target="_blank" rel="noopener"
+           data-desc="Collection d'outils navigateur privacy-first — QR, palettes, suppression de fond, recadrage réseaux sociaux et bien plus. Aucune connexion, tout tourne en local." data-tags="outils,navigateur,design,privacy,qr,couleur"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=delphi.tools&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🛠️</span>Delphi Tools</a>
+      </div>
+
+      <div class="sub-block">
+        <div class="sub-label">Lifestyle</div>
+        <a class="link-item" href="https://www.shopyourtv.com/" target="_blank" rel="noopener"
+           data-desc="Trouve les vêtements et objets vus dans les séries TV et films — identifie et achète directement." data-tags="séries,mode,shopping,tv"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=shopyourtv.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📺</span>ShopYourTv</a>
+        <a class="link-item" href="https://www.startmycar.com/" target="_blank" rel="noopener"
+           data-desc="Guide pour démarrer et entretenir sa voiture — tutoriels et conseils mécaniques en vidéo." data-tags="voiture,tutoriels,mécanique"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=startmycar.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🚗</span>StartMyCar</a>
+        <a class="link-item" href="https://librivox.org/search?primary_key=0&search_category=author&search_page=1&search_form=get_results&search_order=alpha" target="_blank" rel="noopener"
+           data-desc="Livres audio gratuits du domaine public lus par des bénévoles — milliers de titres disponibles." data-tags="livres,audio,gratuit,domaine public"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=librivox.org&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎧</span>LibriVox</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- MES PROJETS -->
+  <section class="cat-section" data-id="perso" id="s-perso">
+    <div class="cat-header">
+      <span class="cat-accent-bar" style="background:var(--c-perso)"></span>
+      <h2 class="cat-title">Mes projets</h2>
+      <span class="cat-count" id="cnt-perso"></span>
+    </div>
+    <div class="sub-grid wide">
+      <div class="sub-block" style="border-color:rgba(252,211,77,0.15)">
+        <div class="sub-label" style="color:rgba(252,211,77,0.4)">Apps perso</div>
+        <a class="link-item personal" href="https://wassimel.github.io/LoL-duel-and-team-build/" target="_blank" rel="noopener"
+           data-desc="Outil LoL perso — duel de champions et composition d'équipe pour préparer ses parties." data-tags="lol,tool,perso">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=wassimel.github.io&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">⚔️</span>LoL Duel + Team Build<span class="star-badge">github pages</span></a>
+        <a class="link-item personal" href="https://stockit-drab.vercel.app/" target="_blank" rel="noopener"
+           data-desc="StockIt — application perso de gestion de stock." data-tags="stock,gestion,perso">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=stockit-drab.vercel.app&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📦</span>StockIt<span class="star-badge">vercel</span></a>
+        <a class="link-item personal" href="https://booster-open.vercel.app/" target="_blank" rel="noopener"
+           data-desc="BoosterGooner — simulateur d'ouverture de boosters Pokémon TCG avec animations et collection." data-tags="pokemon,tcg,booster,simulator">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=booster-open.vercel.app&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🃏</span>BoosterGooner<span class="star-badge">vercel</span></a>
+        <a class="link-item personal" href="https://sis-dashboard-silk.vercel.app/" target="_blank" rel="noopener"
+           data-desc="Dashboard cadeau pour ma sœur — suivi de runs, stream tracker et personnage compagnon." data-tags="dashboard,perso,cadeau">
+          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=sis-dashboard-silk.vercel.app&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📊</span>Sis Dashboard<span class="star-badge">vercel</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXTENSIONS -->
+  <section class="cat-section" data-id="ext" id="s-ext">
+    <div class="cat-header">
+      <span class="cat-accent-bar" style="background:var(--c-ext)"></span>
+      <h2 class="cat-title">Extensions</h2>
+      <span class="cat-count" id="cnt-ext"></span>
+    </div>
+    <div class="sub-grid">
+      <div class="sub-block">
+        <div class="sub-label">Chrome Web Store</div>
+        <a class="link-item" href="https://chromewebstore.google.com/detail/faststream-video-player/kkeakohpadmbldjaiggikmnldlfkdfog" target="_blank" rel="noopener"
+           data-desc="Lecteur vidéo universel — remplace les players natifs avec contrôle de vitesse, raccourcis et plus." data-tags="vidéo,player,streaming"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=chromewebstore.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">▶️</span>FastStream</a>
+        <a class="link-item" href="https://chromewebstore.google.com/detail/return-youtube-dislike/gebbhagfogifgggkldgodflihgfeippi" target="_blank" rel="noopener"
+           data-desc="Restaure le compteur de dislikes YouTube — affiche les données estimées via une API communautaire." data-tags="youtube,dislikes,extension"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=chromewebstore.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">👎</span>Return YouTube Dislike</a>
+        <a class="link-item" href="https://fr.igraal.com/parrainage?parrain=AG_599dd29e08cd5&utm_medium=raf&utm_source=refer_friend" target="_blank" rel="noopener"
+           data-desc="Cashback et codes promo automatiques lors de tes achats en ligne — installe l'extension et économise." data-tags="cashback,promo,shopping"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=igraal.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💰</span>IGraal</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="empty-state" id="empty">
+    <span class="empty-glyph">∅</span>
+    <span>Aucun résultat.</span>
+  </div>
+</div>
+
+<script>
+const SECTIONS = ['jeux','films','hardware','steam','outils','perso','ext'];
+
+function updateCounts() {
+  let total = 0;
+  SECTIONS.forEach(id => {
+    const n = document.querySelectorAll(`#s-${id} .link-item`).length;
+    total += n;
+    const el = document.getElementById(`cnt-${id}`);
+    if (el) el.textContent = n + ' liens';
+  });
+  document.getElementById('total').textContent = total;
+}
+
+function setTab(id) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.id === id));
+  SECTIONS.forEach(sid => {
+    const sec = document.getElementById(`s-${sid}`);
+    if (!sec) return;
+    (id === 'all' || sid === id) ? sec.removeAttribute('hidden') : sec.setAttribute('hidden','');
+  });
+  const s = document.getElementById('search');
+  if (s.value) { s.value = ''; doSearch(''); }
+}
+
+function doSearch(val) {
+  const term = val.trim().toLowerCase();
+  let vis = 0;
+  SECTIONS.forEach(id => {
+    const sec = document.getElementById(`s-${id}`);
+    if (!sec) return;
+    sec.removeAttribute('hidden');
+    let sv = 0;
+    sec.querySelectorAll('.link-item').forEach(a => {
+      const match = !term || a.textContent.toLowerCase().includes(term)
+        || (a.dataset.tags||'').toLowerCase().includes(term)
+        || (a.dataset.desc||'').toLowerCase().includes(term);
+      a.classList.toggle('dim', !match);
+      if (match) sv++;
+    });
+    if (term && sv === 0) sec.setAttribute('hidden','');
+    vis += sv;
+  });
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.id === 'all'));
+  const metaEl = document.getElementById('meta');
+  if (term) {
+    metaEl.innerHTML = `— <span id="total">${vis}</span> résultat${vis!==1?'s':''} pour « ${val} »`;
+  } else {
+    const total = SECTIONS.reduce((n,id)=>n+document.querySelectorAll(`#s-${id} .link-item`).length,0);
+    metaEl.innerHTML = `— <span id="total">${total}</span> liens indexés`;
+  }
+  document.getElementById('empty').classList.toggle('show', !!term && vis === 0);
+}
+
+/* ── TOOLTIP ── */
+const tip     = document.getElementById('tip');
+const tipAddr = document.getElementById('tip-addr');
+const tipFav  = document.getElementById('tip-fav');
+const tipName = document.getElementById('tip-name');
+const tipHost = document.getElementById('tip-host');
+const tipDesc = document.getElementById('tip-desc');
+const tipTags = document.getElementById('tip-tags');
+const tipIcon = document.getElementById('tip-icon');
+
+let htimer = null, htide = null;
+
+function getAccent(el) {
+  const sec = el.closest('.cat-section');
+  if (!sec) return '#818CF8';
+  const map = {jeux:'#22D3EE',films:'#F472B6',hardware:'#FB923C',steam:'#818CF8',outils:'#34D399',perso:'#FCD34D',ext:'#C084FC'};
+  return map[sec.dataset.id] || '#818CF8';
+}
+
+function showTip(e, a) {
+  const url  = a.href;
+  let cleanName = '';
+  a.childNodes.forEach(n => { if (n.nodeType === 3) cleanName += n.textContent; });
+  cleanName = cleanName.trim() || a.textContent.trim().split('\n')[0].trim();
+
+  let host = '';
+  try { host = new URL(url).hostname.replace('www.',''); } catch(e) {}
+
+  const desc = a.dataset.desc || '';
+  const tags = (a.dataset.tags || '').split(',').filter(Boolean);
+
+  tipAddr.textContent = host;
+  tipName.textContent = cleanName;
+  tipHost.textContent = host;
+  tipDesc.textContent = desc;
+
+  /* favicon — taille fixe 16px, pas de grand aperçu */
+  tipFav.src = `https://www.google.com/s2/favicons?domain=${host}&sz=32`;
+  tipFav.onerror = () => { tipFav.style.display = 'none'; };
+  tipFav.onload  = () => { tipFav.style.display = 'block'; };
+
+  tipTags.innerHTML = tags.map(t => `<span class="tip-tag">${t.trim()}</span>`).join('');
+
+  pos(e);
+  tip.classList.add('show');
+}
+
+function pos(e) {
+  const W = 300, PAD = 16;
+  let x = e.clientX + 18, y = e.clientY + 18;
+  if (x + W > window.innerWidth - PAD) x = e.clientX - W - 12;
+  const H = tip.offsetHeight || 200;
+  if (y + H > window.innerHeight - PAD) y = e.clientY - H - 12;
+  tip.style.left = x + 'px';
+  tip.style.top  = y + 'px';
+}
+
+document.querySelectorAll('.link-item').forEach(a => {
+  a.addEventListener('mouseenter', e => {
+    clearTimeout(htide);
+    htimer = setTimeout(() => showTip(e, a), 280);
+  });
+  a.addEventListener('mousemove', e => {
+    if (tip.classList.contains('show')) pos(e);
+  });
+  a.addEventListener('mouseleave', () => {
+    clearTimeout(htimer);
+    htide = setTimeout(() => tip.classList.remove('show'), 100);
+  });
+});
+tip.addEventListener('mouseenter', () => clearTimeout(htide));
+tip.addEventListener('mouseleave', () => { htide = setTimeout(() => tip.classList.remove('show'), 100); });
+
+updateCounts();
+</script>
+</body>
+</html>

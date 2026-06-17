@@ -5,28 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Répertoire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:      #08080E;
-  --surface: #0F0F1A;
-  --card:    #131320;
-  --card-h:  #191929;
-  --line:    #1C1C2E;
-  --line2:   #242438;
-  --txt:     #EEEAF8;
-  --txt2:    #7B78A0;
-  --txt3:    #3D3B55;
+  --bg:    #020818;
+  --surf:  #06112A;
+  --card:  #080F22;
+  --line:  #101E3A;
+  --line2: #162848;
+  --txt:   #F0EEF8;
+  --txt2:  #7874A0;
+  --txt3:  #38365A;
 
-  --c-jeux:  #22D3EE;
-  --c-film:  #F472B6;
-  --c-hard:  #FB923C;
-  --c-steam: #818CF8;
-  --c-outil: #34D399;
-  --c-perso: #FCD34D;
-  --c-ext:   #C084FC;
+  --c-jeux:  #00D4FF;
+  --c-film:  #FF5FA0;
+  --c-hard:  #FF8C42;
+  --c-steam: #8B8FFF;
+  --c-outil: #00E5A0;
+  --c-perso: #FFD166;
+  --c-ext:   #CC7EFF;
 }
 
 html { scroll-behavior: smooth; }
@@ -37,218 +36,305 @@ body {
   font-size: 13px;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
+
+/* ── AURORA ── */
+#aurora-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 60vh;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6;
+}
+nav, .hero, .page, #tip { position: relative; z-index: 1; }
 
 /* ── NAV ── */
 nav {
   position: sticky; top: 0; z-index: 200;
-  background: rgba(8,8,14,0.92);
-  backdrop-filter: blur(20px);
+  background: rgba(2,8,24,0.92);
+  backdrop-filter: blur(24px);
   border-bottom: 1px solid var(--line);
   display: flex; align-items: center;
-  padding: 0 32px; height: 64px;
-  gap: 2px;
-  /* FIXED: no overflow hidden, let it wrap or use wider padding */
+  padding: 0 32px; height: 60px;
+  gap: 2px; overflow-x: auto; scrollbar-width: none;
 }
+nav::-webkit-scrollbar { display: none; }
 
 .nav-logo {
-  font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 17px;
-  color: var(--txt); letter-spacing: -0.5px;
-  margin-right: 20px; white-space: nowrap; flex-shrink: 0;
+  font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 18px;
+  color: var(--txt); letter-spacing: -0.8px;
+  margin-right: 28px; white-space: nowrap; flex-shrink: 0;
 }
-.nav-logo span { color: var(--txt3); font-weight: 400; }
+.nav-logo em { color: var(--txt3); font-style: normal; font-weight: 300; }
 
 .nav-tab {
-  display: flex; align-items: center; gap: 6px;
-  padding: 0 12px; height: 100%;
-  font-size: 12.5px; font-weight: 500; color: var(--txt3);
+  display: flex; align-items: center; gap: 7px;
+  padding: 0 16px; height: 100%;
+  font-size: 13px; font-weight: 500; color: var(--txt3);
   cursor: pointer; border: none; background: none;
   white-space: nowrap; border-bottom: 2px solid transparent;
   transition: color 0.15s, border-color 0.15s;
-  font-family: 'Inter', sans-serif;
-  flex-shrink: 0;
+  font-family: 'Inter', sans-serif; flex-shrink: 0;
 }
 .nav-tab:hover { color: var(--txt2); }
-.nav-tab.active { color: var(--txt); border-bottom-color: currentColor; }
-.nav-tab[data-id="jeux"].active    { color: var(--c-jeux); }
-.nav-tab[data-id="films"].active   { color: var(--c-film); }
-.nav-tab[data-id="hardware"].active{ color: var(--c-hard); }
-.nav-tab[data-id="steam"].active   { color: var(--c-steam); }
-.nav-tab[data-id="outils"].active  { color: var(--c-outil); }
-.nav-tab[data-id="perso"].active   { color: var(--c-perso); }
-.nav-tab[data-id="ext"].active     { color: var(--c-ext); }
+.nav-tab.active { color: var(--txt); border-bottom-color: var(--accent); }
+.nav-tab[data-id="all"].active    { --accent: var(--txt); }
+.nav-tab[data-id="jeux"].active   { --accent: var(--c-jeux); color: var(--c-jeux); }
+.nav-tab[data-id="films"].active  { --accent: var(--c-film); color: var(--c-film); }
+.nav-tab[data-id="hardware"].active { --accent: var(--c-hard); color: var(--c-hard); }
+.nav-tab[data-id="steam"].active  { --accent: var(--c-steam); color: var(--c-steam); }
+.nav-tab[data-id="outils"].active { --accent: var(--c-outil); color: var(--c-outil); }
+.nav-tab[data-id="perso"].active  { --accent: var(--c-perso); color: var(--c-perso); }
+.nav-tab[data-id="plus"].active   { --accent: #38BDF8; color: #38BDF8; }
+.nav-tab[data-id="ext"].active    { --accent: var(--c-ext); color: var(--c-ext); }
 
-.tab-dot { width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0;transition:opacity .15s;flex-shrink:0; }
-.nav-tab.active .tab-dot { opacity:1; }
+/* ── HERO SEARCH ── */
+.hero {
+  padding: 36px 32px 0;
+  display: flex; align-items: center; gap: 20px;
+}
+.hero-title {
+  font-family: 'Outfit', sans-serif; font-weight: 800;
+  font-size: 32px; letter-spacing: -1px; color: var(--txt);
+  line-height: 1; white-space: nowrap;
+}
+.hero-title em { color: var(--txt3); font-style: normal; }
 
-/* ── SEARCH ── */
-.search-zone { padding: 24px 32px 0; }
-.search-inner { max-width: 480px; position: relative; }
-.search-inner svg { position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none; }
+.search-wrap { flex: 1; max-width: 360px; position: relative; }
+.search-wrap svg { position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--txt3);pointer-events:none; }
 #search {
-  width:100%; background:var(--surface); border:1px solid var(--line2);
-  border-radius:10px; padding:10px 14px 10px 38px; color:var(--txt);
-  font-size:13px; font-family:'Inter',sans-serif; outline:none;
-  transition:border-color .15s, box-shadow .15s;
+  width: 100%; background: var(--surf);
+  border: 1px solid var(--line2); border-radius: 12px;
+  padding: 11px 14px 11px 36px; color: var(--txt);
+  font-size: 13px; font-family: 'Inter', sans-serif; outline: none;
+  transition: border-color .15s, box-shadow .15s;
 }
-#search:focus { box-shadow:0 0 0 3px rgba(255,255,255,0.04); }
-#search::placeholder { color:var(--txt3); }
-.search-meta { margin-top:8px;font-size:11.5px;color:var(--txt3);font-family:'JetBrains Mono',monospace; }
+#search:focus { border-color: var(--txt3); box-shadow: 0 0 0 3px rgba(255,255,255,0.03); }
+#search::placeholder { color: var(--txt3); }
 
-/* ── LAYOUT ── */
-.page { padding: 32px 32px 80px; }
-
-/* ── SECTION ── */
-.cat-section { margin-bottom: 52px; scroll-margin-top: 80px; }
-.cat-section[hidden] { display: none !important; }
-.cat-header { display:flex;align-items:baseline;gap:12px;margin-bottom:20px; }
-.cat-title { font-family:'Outfit',sans-serif;font-weight:700;font-size:22px;letter-spacing:-0.5px;color:var(--txt);line-height:1; }
-.cat-accent-bar { height:3px;width:24px;border-radius:2px;display:inline-block;margin-bottom:3px;flex-shrink:0; }
-.cat-count { font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--txt3);margin-left:auto; }
-
-/* ── GRID ── */
-.sub-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px; }
-.sub-grid.wide { grid-template-columns:1fr; }
-.sub-block { background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px; }
-.sub-label { font-size:9.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--txt3);padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:2px; }
-
-/* ── LINK ── */
-.link-item {
-  display:flex; align-items:center; gap:9px;
-  padding:7px 8px; border-radius:7px;
-  text-decoration:none; color:var(--txt2);
-  font-size:12.5px; transition:background .12s, color .12s;
-  border:1px solid transparent; position:relative; cursor:pointer;
+.meta-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--txt3);
+  white-space: nowrap;
 }
-.link-item:hover { background:var(--card-h); border-color:var(--line2); }
-.link-favicon { width:16px; height:16px; border-radius:3px; flex-shrink:0; object-fit:contain; background:var(--line2); }
-.link-favicon.err { display:none; }
-.link-emoji-fb { font-size:13px; flex-shrink:0; width:16px; text-align:center; display:none; }
-.link-favicon.err + .link-emoji-fb { display:inline; }
 
-.cat-section[data-id="jeux"]     .link-item:hover { color:var(--c-jeux); }
-.cat-section[data-id="films"]    .link-item:hover { color:var(--c-film); }
-.cat-section[data-id="hardware"] .link-item:hover { color:var(--c-hard); }
-.cat-section[data-id="steam"]    .link-item:hover { color:var(--c-steam); }
-.cat-section[data-id="outils"]   .link-item:hover { color:var(--c-outil); }
-.cat-section[data-id="perso"]    .link-item:hover { color:var(--c-perso); }
-.cat-section[data-id="ext"]      .link-item:hover { color:var(--c-ext); }
+/* ── PAGE ── */
+.page { padding: 28px 0 80px; }
 
-.star-badge { margin-left:auto;font-size:9px;font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--c-perso);opacity:.5;white-space:nowrap; }
-.link-item.dim { opacity:.12; pointer-events:none; }
+/* ── ROW (section) ── */
+.cat-row { margin-bottom: 44px; }
+.cat-row[hidden] { display: none !important; }
+
+/* section header */
+.row-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 32px; margin-bottom: 16px;
+}
+.row-color-bar { width: 4px; height: 22px; border-radius: 2px; flex-shrink: 0; }
+.row-title {
+  font-family: 'Outfit', sans-serif; font-weight: 700;
+  font-size: 20px; letter-spacing: -0.4px; color: var(--txt);
+}
+.row-sub {
+  font-size: 11px; color: var(--txt3);
+  font-family: 'JetBrains Mono', monospace;
+  margin-left: 4px;
+}
+.row-count { margin-left: auto; font-size: 11px; color: var(--txt3); font-family: 'JetBrains Mono', monospace; }
+
+/* horizontal scroll track */
+.row-track {
+  display: flex; gap: 10px;
+  overflow-x: auto; scroll-snap-type: x mandatory;
+  padding: 4px 32px 12px;
+  scrollbar-width: none;
+}
+.row-track::-webkit-scrollbar { display: none; }
+
+/* ── SUBSECTION PILL (group label) ── */
+.sub-pill {
+  display: flex; flex-direction: column; gap: 8px;
+  flex-shrink: 0; scroll-snap-align: start;
+}
+.sub-pill-label {
+  font-size: 9px; font-weight: 600; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--txt3);
+  padding-left: 2px;
+}
+
+/* ── CARD ── */
+.link-card {
+  display: flex; flex-direction: column;
+  width: 148px; min-height: 88px;
+  background: var(--card);
+  border: 1px solid var(--line2);
+  border-radius: 16px;
+  padding: 14px 13px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  position: relative; overflow: hidden;
+  transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  gap: 8px;
+}
+
+.link-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--glow-color, transparent);
+  opacity: 0;
+  transition: opacity .2s;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.link-card:hover {
+  transform: translateY(-3px) scale(1.02);
+  border-color: var(--glow-color, var(--line2));
+  box-shadow: 0 0 0 1px var(--glow-color, transparent),
+              0 8px 32px var(--shadow-color, transparent),
+              0 2px 8px rgba(0,0,0,0.4);
+}
+.link-card:hover::before { opacity: 0.06; }
+
+.link-card.dim { opacity: 0.1; pointer-events: none; }
+
+/* card top */
+.card-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+}
+.card-favicon {
+  width: 28px; height: 28px; border-radius: 8px;
+  object-fit: contain; background: var(--line);
+  display: block; image-rendering: crisp-edges;
+  flex-shrink: 0;
+}
+.card-favicon.err { display: none; }
+.card-favicon-fb {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: var(--line); display: none;
+  align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.card-favicon.err ~ .card-favicon-fb { display: flex; }
+
+.card-badge {
+  font-size: 8.5px; font-weight: 600; letter-spacing: .06em;
+  text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
+  color: var(--glow-color, var(--txt3));
+  background: color-mix(in srgb, var(--glow-color, var(--txt3)) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--glow-color, var(--txt3)) 25%, transparent);
+  padding: 2px 6px; border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* card name */
+.card-name {
+  font-family: 'Outfit', sans-serif; font-weight: 600;
+  font-size: 12.5px; color: var(--txt); line-height: 1.3;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* card bottom */
+.card-host {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--txt3); margin-top: auto;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* ── PERSO CARDS (wider) ── */
+.link-card.personal {
+  width: 180px;
+  border-color: rgba(255,209,102,0.2);
+  --glow-color: var(--c-perso);
+  --shadow-color: rgba(255,209,102,0.15);
+}
+.card-star {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 10px; color: var(--c-perso); opacity: 0.6;
+}
 
 /* ── TOOLTIP ── */
 #tip {
-  position: fixed;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0;
-  transform: translateY(8px) scale(0.96);
-  transition: opacity 0.16s ease, transform 0.16s ease;
-  width: 300px;
+  position: fixed; z-index: 9999; pointer-events: none;
+  opacity: 0; transform: translateY(6px) scale(0.97);
+  transition: opacity .15s, transform .15s;
+  width: 260px;
 }
-#tip.show {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-.tip-shell {
-  background: #0D0D1C;
-  border: 1px solid #28283E;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 24px 64px rgba(0,0,0,0.75), 0 0 0 1px rgba(255,255,255,0.03);
-}
+#tip.show { opacity: 1; transform: none; }
 
-/* browser chrome */
+.tip-shell {
+  background: rgba(4,10,28,0.97);
+  border: 1px solid var(--line2);
+  border-radius: 14px; overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+}
 .tip-bar {
   display: flex; align-items: center; gap: 8px;
-  padding: 10px 14px;
-  background: #0A0A16;
-  border-bottom: 1px solid #1C1C2E;
+  padding: 8px 12px; background: #020818;
+  border-bottom: 1px solid var(--line);
 }
-.tip-dots { display:flex;gap:5px;flex-shrink:0; }
-.tip-dots span { width:8px;height:8px;border-radius:50%; }
-.tip-dots span:nth-child(1) { background:#3D1C1C; }
-.tip-dots span:nth-child(2) { background:#2E2E1A; }
-.tip-dots span:nth-child(3) { background:#1A2E1A; }
+.tip-dots { display:flex;gap:4px; }
+.tip-dots span { width:7px;height:7px;border-radius:50%; }
+.tip-dots span:nth-child(1){background:#3D1C1C;}
+.tip-dots span:nth-child(2){background:#2E2E1A;}
+.tip-dots span:nth-child(3){background:#1A2E1A;}
 .tip-addr {
-  flex:1; background:#131324; border:1px solid #1C1C2E;
-  border-radius:6px; padding:4px 10px;
-  font-family:'JetBrains Mono',monospace; font-size:10px; color:#4A4870;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  flex:1; font-family:'JetBrains Mono',monospace;
+  font-size:9.5px; color:var(--txt3);
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-
-/* body */
-.tip-body { padding: 16px; }
-
-.tip-head { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
-
-/* FIXED: icône fixe 20x20, pas d'image agrandie */
-.tip-icon {
-  width:20px; height:20px;
-  border-radius:4px;
-  display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; overflow:hidden;
-  background: transparent;
-}
-.tip-icon img {
-  width:16px; height:16px;
-  object-fit:contain;
-  image-rendering:crisp-edges;
-}
-.tip-icon .tip-icon-emoji { font-size:14px; line-height:1; }
-
-.tip-name { font-family:'Outfit',sans-serif;font-weight:700;font-size:15px;color:var(--txt);line-height:1.2; }
-.tip-host { font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--txt3);margin-top:2px; }
-
-.tip-desc {
-  font-size:12px; color:var(--txt2); line-height:1.6;
-  border-top:1px solid var(--line);
-  padding-top:10px;
-}
-
-.tip-tags { display:flex;gap:6px;flex-wrap:wrap;margin-top:10px; }
-.tip-tag {
-  font-size:10px; font-family:'JetBrains Mono',monospace;
-  padding:3px 8px; border-radius:4px;
-  background:var(--line); color:var(--txt3);
-}
+.tip-body { padding: 14px; }
+.tip-head { display:flex;align-items:center;gap:10px;margin-bottom:10px; }
+.tip-fav { width:18px;height:18px;border-radius:4px;object-fit:contain;flex-shrink:0; }
+.tip-name { font-family:'Outfit',sans-serif;font-weight:700;font-size:14px;color:var(--txt);line-height:1.2; }
+.tip-host-lbl { font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--txt3);margin-top:1px; }
+.tip-desc { font-size:11.5px;color:var(--txt2);line-height:1.6;border-top:1px solid var(--line);padding-top:9px; }
+.tip-tags { display:flex;gap:5px;flex-wrap:wrap;margin-top:8px; }
+.tip-tag { font-size:9.5px;font-family:'JetBrains Mono',monospace;padding:2px 7px;border-radius:4px;background:var(--line);color:var(--txt3); }
 
 /* ── EMPTY ── */
-.empty-state { display:none;flex-direction:column;align-items:center;gap:10px;padding:80px 0;color:var(--txt3);font-size:13px; }
+.empty-state {
+  display:none;flex-direction:column;align-items:center;
+  gap:10px;padding:80px 0;color:var(--txt3);
+}
 .empty-state.show { display:flex; }
-.empty-glyph { font-size:28px;font-family:'JetBrains Mono',monospace;color:var(--line2); }
+.empty-glyph { font-size:24px;font-family:'JetBrains Mono',monospace;color:var(--line2); }
 
 ::-webkit-scrollbar{width:3px;height:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--line2);border-radius:2px}
 
 @media(max-width:600px){
-  nav{padding:0 16px;height:56px;overflow-x:auto;scrollbar-width:none;}
-  nav::-webkit-scrollbar{display:none;}
-  .search-zone,.page{padding-left:16px;padding-right:16px}
-  .sub-grid{grid-template-columns:1fr}
+  nav{padding:0 16px;}
+  .hero{padding:20px 16px 0;flex-wrap:wrap;}
+  .row-header,.row-track{padding-left:16px;padding-right:16px;}
   #tip{display:none}
 }
 </style>
 </head>
 <body>
 
+<!-- AURORA BACKGROUND -->
+<canvas id="aurora-canvas"></canvas>
+
 <!-- TOOLTIP -->
 <div id="tip">
   <div class="tip-shell">
     <div class="tip-bar">
       <div class="tip-dots"><span></span><span></span><span></span></div>
-      <div class="tip-addr" id="tip-addr"></div>
+      <span class="tip-addr" id="tip-addr"></span>
     </div>
     <div class="tip-body">
       <div class="tip-head">
-        <div class="tip-icon" id="tip-icon">
-          <img id="tip-fav" src="" alt="">
-        </div>
+        <img class="tip-fav" id="tip-fav" src="" alt="">
         <div>
           <div class="tip-name" id="tip-name"></div>
-          <div class="tip-host" id="tip-host"></div>
+          <div class="tip-host-lbl" id="tip-host"></div>
         </div>
       </div>
       <div class="tip-desc" id="tip-desc"></div>
@@ -257,335 +343,662 @@ nav {
   </div>
 </div>
 
+<!-- NAV -->
 <nav>
-  <span class="nav-logo">répertoire<span>.</span></span>
-  <button class="nav-tab active" data-id="all"      onclick="setTab('all')"><span class="tab-dot"></span>Tout</button>
-  <button class="nav-tab"        data-id="jeux"     onclick="setTab('jeux')"><span class="tab-dot"></span>Jeux</button>
-  <button class="nav-tab"        data-id="films"    onclick="setTab('films')"><span class="tab-dot"></span>Films &amp; Séries</button>
-  <button class="nav-tab"        data-id="hardware" onclick="setTab('hardware')"><span class="tab-dot"></span>Hardware</button>
-  <button class="nav-tab"        data-id="steam"    onclick="setTab('steam')"><span class="tab-dot"></span>Steam</button>
-  <button class="nav-tab"        data-id="outils"   onclick="setTab('outils')"><span class="tab-dot"></span>Outils</button>
-  <button class="nav-tab"        data-id="perso"    onclick="setTab('perso')"><span class="tab-dot"></span>Mes projets</button>
-  <button class="nav-tab"        data-id="ext"      onclick="setTab('ext')"><span class="tab-dot"></span>Extensions</button>
+  <span class="nav-logo">répertoire<em>.</em></span>
+  <button class="nav-tab active" data-id="all"      onclick="setTab('all')">Tout</button>
+  <button class="nav-tab"        data-id="jeux"     onclick="setTab('jeux')">🎮 Jeux</button>
+  <button class="nav-tab"        data-id="films"    onclick="setTab('films')">🎬 Films &amp; Séries</button>
+  <button class="nav-tab"        data-id="hardware" onclick="setTab('hardware')">🖥️ Hardware</button>
+  <button class="nav-tab"        data-id="steam"    onclick="setTab('steam')">🕹️ Steam</button>
+  <button class="nav-tab"        data-id="outils"   onclick="setTab('outils')">🔧 Outils</button>
+  <button class="nav-tab"        data-id="perso"    onclick="setTab('perso')">⭐ Mes projets</button>
+  <button class="nav-tab"        data-id="plus"     onclick="setTab('plus')">➕ Plus</button>
+  <button class="nav-tab"        data-id="ext"      onclick="setTab('ext')">🧩 Extensions</button>
 </nav>
 
-<div class="search-zone">
-  <div class="search-inner">
+<!-- HERO -->
+<div class="hero">
+  <h1 class="hero-title">Répertoire<em>.</em></h1>
+  <div class="search-wrap">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input id="search" type="text" placeholder="Rechercher…" oninput="doSearch(this.value)" autocomplete="off" spellcheck="false">
+    <input id="search" type="text" placeholder="Rechercher un lien, un tag…" oninput="doSearch(this.value)" autocomplete="off" spellcheck="false">
   </div>
-  <p class="search-meta" id="meta">— <span id="total"></span> liens indexés</p>
+  <span class="meta-count" id="meta-count"></span>
 </div>
 
-<div class="page">
+<!-- PAGE -->
+<div class="page" id="page">
 
-  <!-- JEUX -->
-  <section class="cat-section" data-id="jeux" id="s-jeux">
-    <div class="cat-header">
-      <span class="cat-accent-bar" style="background:var(--c-jeux)"></span>
-      <h2 class="cat-title">Jeux</h2>
-      <span class="cat-count" id="cnt-jeux"></span>
+  <!-- ══ JEUX ══ -->
+  <div class="cat-row" data-id="jeux" id="s-jeux">
+    <div class="row-header">
+      <span class="row-color-bar" style="background:var(--c-jeux);box-shadow:0 0 8px var(--c-jeux)"></span>
+      <span class="row-title">Jeux</span>
+      <span class="row-count" id="cnt-jeux"></span>
     </div>
-    <div class="sub-grid">
-      <div class="sub-block">
-        <div class="sub-label">Infos &amp; Actualités</div>
-        <a class="link-item" href="https://gamestatus.info/en" target="_blank" rel="noopener"
-           data-desc="Statut des cracks de jeux PC et calendrier des prochaines sorties crackées." data-tags="crack,pc,releases"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=gamestatus.info&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📋</span>Crack Status</a>
-        <a class="link-item" href="https://news.instant-gaming.com/fr" target="_blank" rel="noopener"
-           data-desc="Actualités gaming par Instant Gaming — soldes, sorties, bons plans jeux PC et consoles." data-tags="news,gaming,soldes"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=instant-gaming.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📰</span>News Instant Gaming</a>
-        <a class="link-item" href="https://crackwatcher.com/" target="_blank" rel="noopener"
-           data-desc="Suivi en temps réel des jeux crackés ou en attente de crack, avec historique des groupes." data-tags="crack,watcher,pc"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=crackwatcher.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">👁️</span>CrackWatcher</a>
-        <a class="link-item" href="https://predb.net/" target="_blank" rel="noopener"
-           data-desc="Répertoire des releases crackées — base de données complète des sorties de la scène." data-tags="releases,scène,db"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=predb.net&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗂️</span>PreDB</a>
-        <a class="link-item" href="https://crackrelease.com/" target="_blank" rel="noopener"
-           data-desc="CrackWatch — statut des cracks de jeux PC avec suivi des DRM et mises à jour récentes." data-tags="crack,drm,pc,status"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=crackrelease.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔓</span>CrackRelease</a>
-        <a class="link-item" href="https://www.pcgamingwiki.com/wiki/Home" target="_blank" rel="noopener"
-           data-desc="Wiki collaboratif de jeux PC — fixes, paramètres, mods, problèmes courants et infos techniques pour des milliers de titres." data-tags="wiki,pc,fix,mods,technique"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=pcgamingwiki.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📖</span>PCGamingWiki</a>
+    <div class="row-track">
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Infos</span>
+        <a class="link-card" href="https://gamestatus.info/en" target="_blank" rel="noopener" data-desc="Statut des cracks de jeux PC et calendrier des prochaines sorties crackées." data-tags="crack,pc,releases" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=gamestatus.info&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📋</div><span class="card-badge">crack</span></div>
+          <span class="card-name">Crack Status</span>
+          <span class="card-host">gamestatus.info</span>
+        </a>
+        <a class="link-card" href="https://news.instant-gaming.com/fr" target="_blank" rel="noopener" data-desc="Actualités gaming par Instant Gaming — soldes, sorties, bons plans jeux PC et consoles." data-tags="news,gaming,soldes" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=instant-gaming.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📰</div><span class="card-badge">news</span></div>
+          <span class="card-name">News Instant Gaming</span>
+          <span class="card-host">instant-gaming.com</span>
+        </a>
+        <a class="link-card" href="https://crackwatcher.com/" target="_blank" rel="noopener" data-desc="Suivi en temps réel des jeux crackés ou en attente de crack, avec historique des groupes." data-tags="crack,watcher,pc" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=crackwatcher.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">👁️</div><span class="card-badge">crack</span></div>
+          <span class="card-name">CrackWatcher</span>
+          <span class="card-host">crackwatcher.com</span>
+        </a>
+        <a class="link-card" href="https://predb.net/" target="_blank" rel="noopener" data-desc="Répertoire des releases crackées — base de données complète des sorties de la scène." data-tags="releases,scène,db" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=predb.net&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🗂️</div><span class="card-badge">db</span></div>
+          <span class="card-name">PreDB</span>
+          <span class="card-host">predb.net</span>
+        </a>
+        <a class="link-card" href="https://www.pcgamingwiki.com/wiki/Home" target="_blank" rel="noopener" data-desc="Wiki collaboratif de jeux PC — fixes, paramètres, mods et infos techniques pour des milliers de titres." data-tags="wiki,pc,fix,mods" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=pcgamingwiki.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📖</div><span class="card-badge">wiki</span></div>
+          <span class="card-name">PCGamingWiki</span>
+          <span class="card-host">pcgamingwiki.com</span>
+        </a>
       </div>
 
-      <div class="sub-block">
-        <div class="sub-label">MegaThread</div>
-        <a class="link-item" href="https://r-roms.github.io/" target="_blank" rel="noopener"
-           data-desc="Index complet de ROMs rétro — NES, SNES, PS1, N64 et bien plus, organisé par plateforme." data-tags="roms,rétro,emulation"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=github.io&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📦</span>Retro Games</a>
-        <a class="link-item" href="https://rentry.org/pgames#direct-download-ddl-sites" target="_blank" rel="noopener"
-           data-desc="Méga liste de sites DDL et torrents pour jeux PC — la référence piratage gaming." data-tags="ddl,torrent,pc,piratage"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=rentry.org&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📋</span>Games Mega Thread</a>
+      <div class="sub-pill">
+        <span class="sub-pill-label">MegaThread</span>
+        <a class="link-card" href="https://r-roms.github.io/" target="_blank" rel="noopener" data-desc="Index complet de ROMs rétro — NES, SNES, PS1, N64 et bien plus, organisé par plateforme." data-tags="roms,rétro,emulation" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=github.io&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📦</div><span class="card-badge">roms</span></div>
+          <span class="card-name">Retro Games</span>
+          <span class="card-host">r-roms.github.io</span>
+        </a>
+        <a class="link-card" href="https://rentry.org/pgames#direct-download-ddl-sites" target="_blank" rel="noopener" data-desc="Méga liste de sites DDL et torrents pour jeux PC — la référence piratage gaming." data-tags="ddl,torrent,pc" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=rentry.org&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📋</div><span class="card-badge">ddl</span></div>
+          <span class="card-name">Games Mega Thread</span>
+          <span class="card-host">rentry.org</span>
+        </a>
       </div>
 
-      <div class="sub-block">
-        <div class="sub-label">Ressources &amp; Archives</div>
-        <a class="link-item" href="https://valvearchive.com/" target="_blank" rel="noopener"
-           data-desc="Archive historique de Valve — builds anciens de Steam, Half-Life, TF2 et autres jeux Valve." data-tags="valve,archive,history"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=valvearchive.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏛️</span>Valve Archive</a>
-        <a class="link-item" href="https://archive.thedatadungeon.com/" target="_blank" rel="noopener"
-           data-desc="Archive de données de jeux vidéo — fichiers, assets, builds anciens et ressources diverses." data-tags="archive,assets,data"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=thedatadungeon.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗄️</span>The Data Dungeon</a>
-        <a class="link-item" href="https://models.spriters-resource.com/" target="_blank" rel="noopener"
-           data-desc="Base de modèles 3D extraits de jeux vidéo — personnages, objets, environnements téléchargeables." data-tags="3D,models,assets"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=spriters-resource.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎮</span>Models Resource</a>
-        <a class="link-item" href="https://www.spriters-resource.com/" target="_blank" rel="noopener"
-           data-desc="La plus grande base de sprites de jeux vidéo — sheets PNG extraites de milliers de titres." data-tags="sprites,sheets,assets"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=spriters-resource.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖼️</span>Spriters Resource</a>
-        <a class="link-item" href="https://www.miicharacters.com/" target="_blank" rel="noopener"
-           data-desc="Galerie et éditeur de Miis — personnages célèbres recréés en Mii à télécharger ou partager." data-tags="mii,wii,nintendo"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=miicharacters.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">👾</span>Mii Characters</a>
-        <a class="link-item" href="https://libraryofcodexes.com/" target="_blank" rel="noopener"
-           data-desc="Collection de codex in-game — lore, bestiaires et encyclopédies tirés de jeux comme TES ou Mass Effect." data-tags="lore,codex,wiki"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=libraryofcodexes.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📚</span>Library of Codexes</a>
+      <div class="sub-pill">
+        <span class="sub-pill-label">Archives</span>
+        <a class="link-card" href="https://valvearchive.com/" target="_blank" rel="noopener" data-desc="Archive historique de Valve — builds anciens de Steam, Half-Life, TF2 et autres jeux Valve." data-tags="valve,archive,history" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=valvearchive.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🏛️</div><span class="card-badge">archive</span></div>
+          <span class="card-name">Valve Archive</span>
+          <span class="card-host">valvearchive.com</span>
+        </a>
+        <a class="link-card" href="https://archive.thedatadungeon.com/" target="_blank" rel="noopener" data-desc="Archive de données de jeux vidéo — fichiers, assets, builds anciens et ressources diverses." data-tags="archive,assets,data" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=thedatadungeon.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🗄️</div><span class="card-badge">data</span></div>
+          <span class="card-name">The Data Dungeon</span>
+          <span class="card-host">thedatadungeon.com</span>
+        </a>
+        <a class="link-card" href="https://models.spriters-resource.com/" target="_blank" rel="noopener" data-desc="Base de modèles 3D extraits de jeux vidéo — personnages, objets, environnements téléchargeables." data-tags="3D,models,assets" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=spriters-resource.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎮</div><span class="card-badge">3D</span></div>
+          <span class="card-name">Models Resource</span>
+          <span class="card-host">models.spriters-resource.com</span>
+        </a>
+        <a class="link-card" href="https://www.spriters-resource.com/" target="_blank" rel="noopener" data-desc="La plus grande base de sprites de jeux vidéo — sheets PNG extraites de milliers de titres." data-tags="sprites,sheets,assets" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=spriters-resource.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🖼️</div><span class="card-badge">sprites</span></div>
+          <span class="card-name">Spriters Resource</span>
+          <span class="card-host">spriters-resource.com</span>
+        </a>
+        <a class="link-card" href="https://www.miicharacters.com/" target="_blank" rel="noopener" data-desc="Galerie et éditeur de Miis — personnages célèbres recréés en Mii à télécharger ou partager." data-tags="mii,wii,nintendo" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=miicharacters.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">👾</div><span class="card-badge">nintendo</span></div>
+          <span class="card-name">Mii Characters</span>
+          <span class="card-host">miicharacters.com</span>
+        </a>
+        <a class="link-card" href="https://libraryofcodexes.com/" target="_blank" rel="noopener" data-desc="Collection de codex in-game — lore, bestiaires et encyclopédies tirés de jeux comme TES ou Mass Effect." data-tags="lore,codex,wiki" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=libraryofcodexes.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📚</div><span class="card-badge">lore</span></div>
+          <span class="card-name">Library of Codexes</span>
+          <span class="card-host">libraryofcodexes.com</span>
+        </a>
       </div>
 
-      <div class="sub-block">
-        <div class="sub-label">Cartes &amp; Guides</div>
-        <a class="link-item" href="https://mapgenie.io/" target="_blank" rel="noopener"
-           data-desc="Cartes interactives pour jeux vidéo — collectibles, missions, secrets tracés sur la map." data-tags="map,guide,collectibles"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=mapgenie.io&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗺️</span>MapGenie</a>
+      <div class="sub-pill">
+        <span class="sub-pill-label">Online &amp; Social</span>
+        <a class="link-card" href="https://mapgenie.io/" target="_blank" rel="noopener" data-desc="Cartes interactives pour jeux vidéo — collectibles, missions, secrets tracés sur la map." data-tags="map,guide,collectibles" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=mapgenie.io&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🗺️</div><span class="card-badge">map</span></div>
+          <span class="card-name">MapGenie</span>
+          <span class="card-host">mapgenie.io</span>
+        </a>
+        <a class="link-card" href="https://gam.onl/" target="_blank" rel="noopener" data-desc="Jeux navigateur en ligne — catalogue de mini-jeux jouables directement sans installation." data-tags="browser,online,gratuit" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=gam.onl&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🌐</div><span class="card-badge">web</span></div>
+          <span class="card-name">GameOnline</span>
+          <span class="card-host">gam.onl</span>
+        </a>
+        <a class="link-card" href="https://buzzin.live/" target="_blank" rel="noopener" data-desc="Buzzer en ligne pour jeux de quiz — crée une salle, chacun buzzotte depuis son téléphone." data-tags="quiz,buzzer,live" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=buzzin.live&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🔔</div><span class="card-badge">live</span></div>
+          <span class="card-name">Buzzin</span>
+          <span class="card-host">buzzin.live</span>
+        </a>
+        <a class="link-card" href="https://challonge.com/fr" target="_blank" rel="noopener" data-desc="Création et gestion de brackets de tournoi — simple, gratuit, pour n'importe quel jeu ou sport." data-tags="tournoi,bracket,esport" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=challonge.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🏆</div><span class="card-badge">tournoi</span></div>
+          <span class="card-name">Challonge</span>
+          <span class="card-host">challonge.com</span>
+        </a>
       </div>
 
-      <div class="sub-block">
-        <div class="sub-label">Jeu en ligne &amp; Social</div>
-        <a class="link-item" href="https://gam.onl/" target="_blank" rel="noopener"
-           data-desc="Jeux navigateur en ligne — catalogue de mini-jeux jouables directement sans installation." data-tags="browser,online,gratuit"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=gam.onl&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🌐</span>GameOnline</a>
-        <a class="link-item" href="https://dos.zone/" target="_blank" rel="noopener"
-           data-desc="Collection de jeux DOS jouables directement dans le navigateur — sans installation, sans pub." data-tags="dos,rétro,browser,gratuit"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=dos.zone&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💾</span>DOS Zone</a>
-        <a class="link-item" href="https://buzzin.live/" target="_blank" rel="noopener"
-           data-desc="Buzzer en ligne pour jeux de quiz — crée une salle, partage le lien, chacun buzzotte depuis son téléphone." data-tags="quiz,buzzer,live,multijoueur"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=buzzin.live&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔔</span>Buzzin — Buzzer en ligne</a>
-        <a class="link-item" href="https://challonge.com/fr" target="_blank" rel="noopener"
-           data-desc="Création et gestion de brackets de tournoi — simple, gratuit, pour n'importe quel jeu ou sport." data-tags="tournoi,bracket,esport"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=challonge.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏆</span>Challonge — Tournois</a>
+      <div class="sub-pill">
+        <span class="sub-pill-label">Bons Plans</span>
+        <a class="link-card" href="https://isthereanydeal.com/" target="_blank" rel="noopener" data-desc="Comparateur de prix de jeux PC — historique des prix, alertes et meilleures promos sur toutes les boutiques." data-tags="prix,soldes,promo,steam" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=isthereanydeal.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🏷️</div><span class="card-badge">prix</span></div>
+          <span class="card-name">IsThereAnyDeal</span>
+          <span class="card-host">isthereanydeal.com</span>
+        </a>
+        <a class="link-card" href="https://mega.nz/file/R4pxBYZa#aYnBbWu_pyDrokT8J1GUmDGL8RmtqHJ8AOchdOIZolY" target="_blank" rel="noopener" data-desc="Archive ZIP de torrents de jeux — collection hébergée sur Mega." data-tags="torrent,archive,mega" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=mega.nz&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🗜️</div><span class="card-badge">zip</span></div>
+          <span class="card-name">Archive Torrent ZIP</span>
+          <span class="card-host">mega.nz</span>
+        </a>
+        <a class="link-card" href="https://rebrickable.com/build/" target="_blank" rel="noopener" data-desc="Trouve ce que tu peux construire avec tes pièces LEGO — base de données de sets et MOCs." data-tags="lego,moc,build" style="--glow-color:var(--c-jeux);--shadow-color:rgba(0,212,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=rebrickable.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🧱</div><span class="card-badge">lego</span></div>
+          <span class="card-name">Rebrickable</span>
+          <span class="card-host">rebrickable.com</span>
+        </a>
       </div>
 
-      <div class="sub-block">
-        <div class="sub-label">Bons Plans &amp; Autre</div>
-        <a class="link-item" href="https://isthereanydeal.com/" target="_blank" rel="noopener"
-           data-desc="Comparateur de prix de jeux PC — historique des prix, alertes et meilleures promos sur toutes les boutiques." data-tags="prix,soldes,promo,steam"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=isthereanydeal.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏷️</span>IsThereAnyDeal</a>
-        <a class="link-item" href="https://mega.nz/file/R4pxBYZa#aYnBbWu_pyDrokT8J1GUmDGL8RmtqHJ8AOchdOIZolY" target="_blank" rel="noopener"
-           data-desc="Archive ZIP de torrents de jeux — collection hébergée sur Mega." data-tags="torrent,archive,mega"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=mega.nz&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗜️</span>Archive Torrent ZIP</a>
-        <a class="link-item" href="https://rebrickable.com/build/" target="_blank" rel="noopener"
-           data-desc="Trouve ce que tu peux construire avec tes pièces LEGO — base de données de sets et MOCs." data-tags="lego,moc,build"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=rebrickable.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🧱</span>Rebrickable — LEGO Build</a>
-      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- FILMS -->
-  <section class="cat-section" data-id="films" id="s-films">
-    <div class="cat-header">
-      <span class="cat-accent-bar" style="background:var(--c-film)"></span>
-      <h2 class="cat-title">Films &amp; Séries</h2>
-      <span class="cat-count" id="cnt-films"></span>
+  <!-- ══ FILMS ══ -->
+  <div class="cat-row" data-id="films" id="s-films">
+    <div class="row-header">
+      <span class="row-color-bar" style="background:var(--c-film);box-shadow:0 0 8px var(--c-film)"></span>
+      <span class="row-title">Films &amp; Séries</span>
+      <span class="row-count" id="cnt-films"></span>
     </div>
-    <div class="sub-grid">
-      <div class="sub-block">
-        <div class="sub-label">Streaming</div>
-        <a class="link-item" href="https://movix.cash/" target="_blank" rel="noopener"
-           data-desc="Streaming gratuit de films et séries en HD — VF, VOSTFR, catalogue complet avec watch party." data-tags="streaming,vf,vostfr,gratuit"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=movix.cash&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">▶️</span>Movix</a>
-        <a class="link-item" href="https://hydracker.com/" target="_blank" rel="noopener"
-           data-desc="DarkiWorld — streaming et téléchargement de films et séries, nombreuses sources disponibles." data-tags="streaming,ddl,darkiworld"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=hydracker.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">⬇️</span>Hydracker (DarkiWorld)</a>
+    <div class="row-track">
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Streaming</span>
+        <a class="link-card" href="https://movix.cash/" target="_blank" rel="noopener" data-desc="Streaming gratuit de films et séries en HD — VF, VOSTFR, catalogue complet avec watch party." data-tags="streaming,vf,vostfr,gratuit" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=movix.cash&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">▶️</div><span class="card-badge">HD</span></div>
+          <span class="card-name">Movix</span>
+          <span class="card-host">movix.cash</span>
+        </a>
+        <a class="link-card" href="https://hydracker.com/" target="_blank" rel="noopener" data-desc="DarkiWorld — streaming et téléchargement de films et séries, nombreuses sources disponibles." data-tags="streaming,ddl,darkiworld" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=hydracker.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">⬇️</div><span class="card-badge">ddl</span></div>
+          <span class="card-name">Hydracker</span>
+          <span class="card-host">hydracker.com</span>
+        </a>
       </div>
 
-      <div class="sub-block">
-        <div class="sub-label">MegaThread</div>
-        <a class="link-item" href="https://fmhy.pages.dev/non-english" target="_blank" rel="noopener"
-           data-desc="FMHY section multilingue — liste exhaustive de ressources streaming et téléchargement hors anglais." data-tags="fmhy,streaming,multilangue"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=fmhy.pages.dev&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🌍</span>FMHY Multilangue</a>
-        <a class="link-item" href="https://fmhy.pages.dev/non-english#french-francais" target="_blank" rel="noopener"
-           data-desc="Section française du FMHY — sites de streaming et DDL en VF recommandés par la communauté." data-tags="fmhy,français,vf"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=fmhy.pages.dev&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🇫🇷</span>FMHY FR</a>
-        <a class="link-item" href="https://rentry.co/zdno5k4z" target="_blank" rel="noopener"
-           data-desc="Mega thread Rentry de films et séries — liens directs et torrents organisés par catégorie." data-tags="rentry,films,séries"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=rentry.co&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📋</span>Rentry Mega Thread</a>
-        <a class="link-item" href="https://theindex.moe/library/anime" target="_blank" rel="noopener"
-           data-desc="Index anime complet — sites de streaming légaux et non-officiels classés par qualité et langue." data-tags="anime,index,streaming"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=theindex.moe&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">✨</span>Anime Mega Thread</a>
-        <a class="link-item" href="https://pastebin.com/SuwS6kri" target="_blank" rel="noopener"
-           data-desc="MegaMegaThread — compilation ultime de ressources films, séries, anime et plus." data-tags="pastebin,mega,films"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=pastebin.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📎</span>MegaMegaThread</a>
+      <div class="sub-pill">
+        <span class="sub-pill-label">MegaThread</span>
+        <a class="link-card" href="https://fmhy.pages.dev/non-english" target="_blank" rel="noopener" data-desc="FMHY section multilingue — liste exhaustive de ressources streaming et téléchargement hors anglais." data-tags="fmhy,streaming,multilangue" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=fmhy.pages.dev&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🌍</div><span class="card-badge">multi</span></div>
+          <span class="card-name">FMHY Multilangue</span>
+          <span class="card-host">fmhy.pages.dev</span>
+        </a>
+        <a class="link-card" href="https://fmhy.pages.dev/non-english#french-francais" target="_blank" rel="noopener" data-desc="Section française du FMHY — sites de streaming et DDL en VF recommandés par la communauté." data-tags="fmhy,français,vf" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=fmhy.pages.dev&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🇫🇷</div><span class="card-badge">FR</span></div>
+          <span class="card-name">FMHY FR</span>
+          <span class="card-host">fmhy.pages.dev</span>
+        </a>
+        <a class="link-card" href="https://rentry.co/zdno5k4z" target="_blank" rel="noopener" data-desc="Mega thread Rentry de films et séries — liens directs et torrents organisés par catégorie." data-tags="rentry,films,séries" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=rentry.co&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📋</div><span class="card-badge">thread</span></div>
+          <span class="card-name">Rentry Mega Thread</span>
+          <span class="card-host">rentry.co</span>
+        </a>
+        <a class="link-card" href="https://theindex.moe/library/anime" target="_blank" rel="noopener" data-desc="Index anime complet — sites de streaming légaux et non-officiels classés par qualité et langue." data-tags="anime,index,streaming" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=theindex.moe&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">✨</div><span class="card-badge">anime</span></div>
+          <span class="card-name">Anime Mega Thread</span>
+          <span class="card-host">theindex.moe</span>
+        </a>
+        <a class="link-card" href="https://pastebin.com/SuwS6kri" target="_blank" rel="noopener" data-desc="MegaMegaThread — compilation ultime de ressources films, séries, anime et plus." data-tags="pastebin,mega,films" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=pastebin.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📎</div><span class="card-badge">mega</span></div>
+          <span class="card-name">MegaMegaThread</span>
+          <span class="card-host">pastebin.com</span>
+        </a>
       </div>
 
-      <div class="sub-block">
-        <div class="sub-label">Visuels &amp; Suivi</div>
-        <a class="link-item" href="https://www.movieposterdb.com/" target="_blank" rel="noopener"
-           data-desc="Base de données d'affiches de films en haute résolution — parfait pour les montages et collections." data-tags="affiches,posters,hd"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=movieposterdb.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖼️</span>MoviePosterDB</a>
-        <a class="link-item" href="https://film-grab.com/" target="_blank" rel="noopener"
-           data-desc="Captures d'écran artistiques de films — frames soigneusement sélectionnées pour leur composition." data-tags="frames,cinéma,shots"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=film-grab.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📷</span>FilmGrab</a>
-        <a class="link-item" href="https://letterboxd.com/" target="_blank" rel="noopener"
-           data-desc="Réseau social de cinéphiles — journal de films, notes, listes et critiques. Le Goodreads du ciné." data-tags="films,journal,social,critiques"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=letterboxd.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎞️</span>Letterboxd</a>
+      <div class="sub-pill">
+        <span class="sub-pill-label">Visuels &amp; Suivi</span>
+        <a class="link-card" href="https://www.movieposterdb.com/" target="_blank" rel="noopener" data-desc="Base de données d'affiches de films en haute résolution — parfait pour les montages et collections." data-tags="affiches,posters,hd" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=movieposterdb.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🖼️</div><span class="card-badge">posters</span></div>
+          <span class="card-name">MoviePosterDB</span>
+          <span class="card-host">movieposterdb.com</span>
+        </a>
+        <a class="link-card" href="https://film-grab.com/" target="_blank" rel="noopener" data-desc="Captures d'écran artistiques de films — frames soigneusement sélectionnées pour leur composition." data-tags="frames,cinéma,shots" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=film-grab.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📷</div><span class="card-badge">shots</span></div>
+          <span class="card-name">FilmGrab</span>
+          <span class="card-host">film-grab.com</span>
+        </a>
+        <a class="link-card" href="https://letterboxd.com/" target="_blank" rel="noopener" data-desc="Réseau social de cinéphiles — journal de films, notes, listes et critiques. Le Goodreads du ciné." data-tags="films,journal,social,critiques" style="--glow-color:var(--c-film);--shadow-color:rgba(255,95,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=letterboxd.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎞️</div><span class="card-badge">social</span></div>
+          <span class="card-name">Letterboxd</span>
+          <span class="card-host">letterboxd.com</span>
+        </a>
       </div>
+
     </div>
-  </section>
+  </div>
 
-  <!-- HARDWARE -->
-  <section class="cat-section" data-id="hardware" id="s-hardware">
-    <div class="cat-header">
-      <span class="cat-accent-bar" style="background:var(--c-hard)"></span>
-      <h2 class="cat-title">Hardware</h2>
-      <span class="cat-count" id="cnt-hardware"></span>
+  <!-- ══ HARDWARE ══ -->
+  <div class="cat-row" data-id="hardware" id="s-hardware">
+    <div class="row-header">
+      <span class="row-color-bar" style="background:var(--c-hard);box-shadow:0 0 8px var(--c-hard)"></span>
+      <span class="row-title">Hardware</span>
+      <span class="row-count" id="cnt-hardware"></span>
     </div>
-    <div class="sub-grid">
-      <div class="sub-block">
-        <div class="sub-label">Benchmarks &amp; Tier Lists</div>
-        <a class="link-item" href="https://docs.google.com/spreadsheets/d/1NMDwOkn3uynv7aIBZxrIl9kLiV7t9OXJJIFySD-pOrY/edit?gid=2062135880#gid=2062135880" target="_blank" rel="noopener"
-           data-desc="Spreadsheet communautaire comparant souris, tapis, manchettes et IEM pour le gaming compétitif." data-tags="souris,tapis,iem,peripheriques"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖱️</span>Test Souris / Tapis / IEM</a>
-        <a class="link-item" href="https://docs.google.com/spreadsheets/d/1CVS1pg1Ln8q52f6vPV45PTQZCUjB33-FugqLhwpND3A/edit?gid=0#gid=0" target="_blank" rel="noopener"
-           data-desc="Comparatif détaillé des SSD — vitesses séquentielles, aléatoires, températures et rapport qualité/prix." data-tags="ssd,stockage,benchmark"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💾</span>SSD Comparaison</a>
-        <a class="link-item" href="https://docs.google.com/spreadsheets/d/1wAcWruFXxGAw0ckt8sn_YaajzSLOdG7vq1WmmEwwo3c/edit?gid=1719706335#gid=1719706335" target="_blank" rel="noopener"
-           data-desc="Tier list des alimentations PC — classement par fiabilité, protection et qualité des rails." data-tags="psu,alimentation,tier"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">⚡</span>Tierlist Alimentation PC</a>
-        <a class="link-item" href="https://docs.google.com/spreadsheets/d/1H_ZJVRr_1yr8dnUE2FlrUMaWectzKoLhzXMQQoPJGmk/edit?gid=757992332#gid=757992332" target="_blank" rel="noopener"
-           data-desc="Benchmark GPU comparatif — performances en jeu, rasterisation et ray tracing par carte graphique." data-tags="gpu,benchmark,graphique"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎮</span>Test GPU</a>
-        <a class="link-item" href="https://www.systemrequirementslab.com/cyri" target="_blank" rel="noopener"
-           data-desc="Vérifie si ton PC peut faire tourner un jeu — analyse automatique de ta config vs les prérequis." data-tags="config,prérequis,pc"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=systemrequirementslab.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">✅</span>CanYouRunIt</a>
-        <a class="link-item" href="https://mousectrl.com/mousepads" target="_blank" rel="noopener"
-           data-desc="Comparatif et guide d'achat de tapis de souris gaming — surface, vitesse, taille et revêtement." data-tags="tapis,souris,gaming"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=mousectrl.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖱️</span>MouseCtrl — Tapis de souris</a>
-        <a class="link-item" href="https://pcie-simulator.vercel.app/" target="_blank" rel="noopener"
-           data-desc="Simulateur PCIe interactif — visualise les lanes, la bande passante et la compatibilité des slots." data-tags="pcie,pc,motherboard,simulation"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=pcie-simulator.vercel.app&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔌</span>PCIe Simulator</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- STEAM -->
-  <section class="cat-section" data-id="steam" id="s-steam">
-    <div class="cat-header">
-      <span class="cat-accent-bar" style="background:var(--c-steam)"></span>
-      <h2 class="cat-title">Steam</h2>
-      <span class="cat-count" id="cnt-steam"></span>
-    </div>
-    <div class="sub-grid">
-      <div class="sub-block">
-        <div class="sub-label">Outils</div>
-        <a class="link-item" href="https://steambrew.app/" target="_blank" rel="noopener"
-           data-desc="Millenium — client Steam moddé avec thèmes et plugins, remplaçant de SFP." data-tags="steam,thèmes,mods,client"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steambrew.app&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎨</span>SteamBrew – Millenium</a>
-        <a class="link-item" href="https://github.com/Depressurizer/Depressurizer" target="_blank" rel="noopener"
-           data-desc="Gestionnaire de bibliothèque Steam — trie et catégorise automatiquement tes jeux par genre, tags." data-tags="steam,library,organisation"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=github.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏷️</span>Depressurizer</a>
-        <a class="link-item" href="https://steamdb.info/" target="_blank" rel="noopener"
-           data-desc="Base de données Steam complète — historique des prix, packages, builds et infos cachées." data-tags="steam,db,prix,historique"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steamdb.info&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🗄️</span>SteamDB</a>
-        <a class="link-item" href="https://steamstat.us/" target="_blank" rel="noopener"
-           data-desc="Statut en temps réel des serveurs Steam — voir si Steam est down ou si c'est ton côté." data-tags="steam,status,serveurs"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steamstat.us&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📡</span>SteamStatus</a>
-      </div>
-
-      <div class="sub-block">
-        <div class="sub-label">Découverte &amp; Stats</div>
-        <a class="link-item" href="https://steamladder.com/" target="_blank" rel="noopener"
-           data-desc="Classement Steam mondial et par pays — compare ta valeur de bibliothèque et tes achievements." data-tags="steam,ranking,stats"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steamladder.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🏆</span>SteamLadder</a>
-        <a class="link-item" href="https://steampeek.hu/" target="_blank" rel="noopener"
-           data-desc="Découverte de jeux Steam — trouve des jeux similaires à ce que tu aimes, filtres avancés." data-tags="steam,découverte,similaire"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=steampeek.hu&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔍</span>Steampeek</a>
-        <a class="link-item" href="https://nodal.gg/" target="_blank" rel="noopener"
-           data-desc="Trouve des jeux similaires à n'importe quel titre — moteur de recommandation basé sur les tags Steam." data-tags="steam,similaire,recommandation"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=nodal.gg&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔗</span>Nodal — Jeux similaires</a>
-        <a class="link-item" href="https://www.letsplayindex.com/" target="_blank" rel="noopener"
-           data-desc="Index de let's plays — trouve des vidéos de gameplay pour n'importe quel jeu, par créateur ou plateforme." data-tags="lets play,youtube,gameplay"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=letsplayindex.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎬</span>Let's Play Index</a>
-        <a class="link-item" href="https://howlongtobeat.com/" target="_blank" rel="noopener"
-           data-desc="Durée de vie des jeux — combien d'heures pour finir l'histoire, à 100%, ou en speedrun." data-tags="durée,hltb,completion"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=howlongtobeat.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">⏱️</span>HowLongToBeat</a>
-        <a class="link-item" href="https://backloggd.com/" target="_blank" rel="noopener"
-           data-desc="Suivi de ta bibliothèque de jeux — backlog, wishlist, notes et journal de gaming social." data-tags="backlog,gaming,suivi,social"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=backloggd.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📝</span>Backloggd</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- OUTILS -->
-  <section class="cat-section" data-id="outils" id="s-outils">
-    <div class="cat-header">
-      <span class="cat-accent-bar" style="background:var(--c-outil)"></span>
-      <h2 class="cat-title">Outils</h2>
-      <span class="cat-count" id="cnt-outils"></span>
-    </div>
-    <div class="sub-grid">
-      <div class="sub-block">
-        <div class="sub-label">Édition graphique</div>
-        <a class="link-item" href="https://www.photopea.com/" target="_blank" rel="noopener"
-           data-desc="Photoshop gratuit dans le navigateur — supporte les fichiers PSD, XCF, Sketch et plus." data-tags="photoshop,édition,psd,gratuit"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=photopea.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖼️</span>Photopea</a>
-        <a class="link-item" href="https://www.canva.com/fr_be/" target="_blank" rel="noopener"
-           data-desc="Outil de design graphique en ligne — templates, présentations, posts réseaux sociaux et plus." data-tags="design,templates,graphisme"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=canva.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🖌️</span>Canva</a>
-        <a class="link-item" href="https://pixlr.com/fr/" target="_blank" rel="noopener"
-           data-desc="Éditeur photo en ligne avec IA — retouche, collages, effets et suppression d'arrière-plan." data-tags="photo,édition,ia"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=pixlr.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">✨</span>Pixlr</a>
-        <a class="link-item" href="https://stamplab.javii.tools/" target="_blank" rel="noopener"
-           data-desc="Crée de faux affichages de messages (Discord, SMS, etc.) en PNG — idéal pour les montages et memes." data-tags="montage,faux,messages,png"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=javii.tools&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💬</span>StampLab — Faux messages</a>
-        <a class="link-item" href="https://www.blueprint.am/" target="_blank" rel="noopener"
-           data-desc="Outil IA de conception hardware — génère des schémas de câblage, listes de matériel et guides d'assemblage depuis une simple description." data-tags="ia,hardware,electronique,arduino,raspberry,schéma,design"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=blueprint.am&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📐</span>Blueprint.am</a>
-        <a class="link-item" href="https://www.flaticon.com/fr/" target="_blank" rel="noopener"
-           data-desc="La plus grande base d'icônes gratuites — millions d'icônes PNG, SVG et police d'icônes, par packs et styles." data-tags="icônes,icons,svg,png,design,gratuit"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=flaticon.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎨</span>Flaticon</a>
-      </div>
-
-      <div class="sub-block">
-        <div class="sub-label">Audio</div>
-        <a class="link-item" href="https://vocalremover.org/fr/" target="_blank" rel="noopener"
-           data-desc="Sépare les voix de la musique avec l'IA — extrait instrumentales, stems et voix en quelques secondes." data-tags="audio,vocal,stems,ia"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=vocalremover.org&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎙️</span>Vocal Remover</a>
-      </div>
-
-      <div class="sub-block">
-        <div class="sub-label">Gaming</div>
-        <a class="link-item" href="https://csgoskins.gg/" target="_blank" rel="noopener"
-           data-desc="Marché CS2 — prix des skins en temps réel, historique, wear et comparaisons entre plateformes." data-tags="cs2,skins,marché,prix"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=csgoskins.gg&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔫</span>CS2 Market</a>
-        <a class="link-item" href="https://cs2inspects.com/fr" target="_blank" rel="noopener"
-           data-desc="Inspecte et prévisualise n'importe quel skin CS2 en jeu — teste des crafts et combos personnalisés sur un serveur communautaire." data-tags="cs2,skins,inspect,craft,preview"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=cs2inspects.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🔍</span>CS2 Inspects</a>
-        <a class="link-item" href="https://cs2points.com/?ref=76561198117831929" target="_blank" rel="noopener"
-           data-desc="Gagne des skins CS2 et cartes cadeaux gratuitement en complétant des petites tâches ou regardant des vidéos — sans gambling." data-tags="cs2,skins,gratuit,points,earn"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=cs2points.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎁</span>CS2 Points</a>
-      </div>
-
-      <div class="sub-block">
-        <div class="sub-label">Utilitaires web</div>
-        <a class="link-item" href="https://humanbenchmark.com/" target="_blank" rel="noopener"
-           data-desc="Tests de performance humaine — temps de réaction, mémoire, frappe, vision et plus." data-tags="benchmark,réaction,tests"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=humanbenchmark.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🧠</span>HumanBenchmark</a>
-        <a class="link-item" href="https://downdetector.fr/" target="_blank" rel="noopener"
-           data-desc="Détecte les pannes de services en temps réel — Steam, Discord, PSN, banques et plus." data-tags="panne,status,services"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=downdetector.fr&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📶</span>Downdetector</a>
-        <a class="link-item" href="https://pimeyes.com/en" target="_blank" rel="noopener"
-           data-desc="Moteur de recherche faciale inversée — trouve où une photo de visage apparaît sur internet." data-tags="visage,recherche,image,ia"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=pimeyes.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">👁️</span>PimEyes</a>
-        <a class="link-item" href="https://www.dealabs.com/" target="_blank" rel="noopener"
-           data-desc="Communauté de bons plans — promos, codes promo et ventes flash signalées par les membres." data-tags="promos,deals,bons plans"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=dealabs.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💸</span>Dealabs</a>
-        <a class="link-item" href="https://delphi.tools/" target="_blank" rel="noopener"
-           data-desc="Collection d'outils navigateur privacy-first — QR, palettes, suppression de fond, recadrage réseaux sociaux et bien plus. Aucune connexion, tout tourne en local." data-tags="outils,navigateur,design,privacy,qr,couleur"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=delphi.tools&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🛠️</span>Delphi Tools</a>
-      </div>
-
-      <div class="sub-block">
-        <div class="sub-label">Lifestyle</div>
-        <a class="link-item" href="https://www.shopyourtv.com/" target="_blank" rel="noopener"
-           data-desc="Trouve les vêtements et objets vus dans les séries TV et films — identifie et achète directement." data-tags="séries,mode,shopping,tv"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=shopyourtv.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📺</span>ShopYourTv</a>
-        <a class="link-item" href="https://www.startmycar.com/" target="_blank" rel="noopener"
-           data-desc="Guide pour démarrer et entretenir sa voiture — tutoriels et conseils mécaniques en vidéo." data-tags="voiture,tutoriels,mécanique"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=startmycar.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🚗</span>StartMyCar</a>
-        <a class="link-item" href="https://librivox.org/search?primary_key=0&search_category=author&search_page=1&search_form=get_results&search_order=alpha" target="_blank" rel="noopener"
-           data-desc="Livres audio gratuits du domaine public lus par des bénévoles — milliers de titres disponibles." data-tags="livres,audio,gratuit,domaine public"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=librivox.org&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎧</span>LibriVox</a>
-        <a class="link-item" href="https://www.whosampled.com/" target="_blank" rel="noopener"
-           data-desc="Découvre les samples, covers et remixes — trace les connexions entre plus de 315 000 chansons et 110 000 artistes." data-tags="musique,samples,covers,remix,hip-hop"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=whosampled.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🎵</span>WhoSampled</a>
-      </div>
-
-      <div class="sub-block">
-        <div class="sub-label">Rewards &amp; Gains</div>
-        <a class="link-item" href="https://www.ipsosisay.com/" target="_blank" rel="noopener"
-           data-desc="Sondages rémunérés par Ipsos — réponds à des enquêtes et gagne des points échangeables contre des récompenses." data-tags="sondages,rémunéré,rewards,ipsos"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=ipsosisay.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📊</span>Ipsos iSay</a>
-        <a class="link-item" href="https://www.swagbucks.com/p/login?lang=fr" target="_blank" rel="noopener"
-           data-desc="Plateforme de récompenses — gagne des SB en faisant des achats, sondages, vidéos et jeux, échangeables contre des cartes cadeaux." data-tags="rewards,cashback,cartes cadeaux,sondages,swagbucks"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=swagbucks.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💰</span>Swagbucks</a>
-        <a class="link-item" href="https://freecash.com/r/gagner_de_largent" target="_blank" rel="noopener"
-           data-desc="Gagne de l'argent réel ou des crypto en complétant des offres, sondages et tâches — retraits rapides." data-tags="rewards,argent,crypto,offres,freecash"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=freecash.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💵</span>FreeCash</a>
+    <div class="row-track">
+      <div class="sub-pill">
+        <span class="sub-pill-label">Benchmarks &amp; Tier Lists</span>
+        <a class="link-card" href="https://docs.google.com/spreadsheets/d/1NMDwOkn3uynv7aIBZxrIl9kLiV7t9OXJJIFySD-pOrY/edit?gid=2062135880#gid=2062135880" target="_blank" rel="noopener" data-desc="Spreadsheet comparant souris, tapis, manchettes et IEM pour le gaming compétitif." data-tags="souris,tapis,iem" style="--glow-color:var(--c-hard);--shadow-color:rgba(255,140,66,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🖱️</div><span class="card-badge">souris</span></div>
+          <span class="card-name">Test Souris / Tapis / IEM</span>
+          <span class="card-host">docs.google.com</span>
+        </a>
+        <a class="link-card" href="https://docs.google.com/spreadsheets/d/1CVS1pg1Ln8q52f6vPV45PTQZCUjB33-FugqLhwpND3A/edit?gid=0#gid=0" target="_blank" rel="noopener" data-desc="Comparatif détaillé des SSD — vitesses, températures et rapport qualité/prix." data-tags="ssd,stockage,benchmark" style="--glow-color:var(--c-hard);--shadow-color:rgba(255,140,66,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">💾</div><span class="card-badge">SSD</span></div>
+          <span class="card-name">SSD Comparaison</span>
+          <span class="card-host">docs.google.com</span>
+        </a>
+        <a class="link-card" href="https://docs.google.com/spreadsheets/d/1wAcWruFXxGAw0ckt8sn_YaajzSLOdG7vq1WmmEwwo3c/edit?gid=1719706335#gid=1719706335" target="_blank" rel="noopener" data-desc="Tier list des alimentations PC — classement par fiabilité, protection et qualité des rails." data-tags="psu,alimentation,tier" style="--glow-color:var(--c-hard);--shadow-color:rgba(255,140,66,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">⚡</div><span class="card-badge">PSU</span></div>
+          <span class="card-name">Tierlist Alimentation</span>
+          <span class="card-host">docs.google.com</span>
+        </a>
+        <a class="link-card" href="https://docs.google.com/spreadsheets/d/1H_ZJVRr_1yr8dnUE2FlrUMaWectzKoLhzXMQQoPJGmk/edit?gid=757992332#gid=757992332" target="_blank" rel="noopener" data-desc="Benchmark GPU comparatif — performances en jeu, rasterisation et ray tracing par carte graphique." data-tags="gpu,benchmark,graphique" style="--glow-color:var(--c-hard);--shadow-color:rgba(255,140,66,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=docs.google.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎮</div><span class="card-badge">GPU</span></div>
+          <span class="card-name">Test GPU</span>
+          <span class="card-host">docs.google.com</span>
+        </a>
+        <a class="link-card" href="https://www.systemrequirementslab.com/cyri" target="_blank" rel="noopener" data-desc="Vérifie si ton PC peut faire tourner un jeu — analyse automatique de ta config vs les prérequis." data-tags="config,prérequis,pc" style="--glow-color:var(--c-hard);--shadow-color:rgba(255,140,66,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=systemrequirementslab.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">✅</div><span class="card-badge">check</span></div>
+          <span class="card-name">CanYouRunIt</span>
+          <span class="card-host">systemrequirementslab.com</span>
+        </a>
+        <a class="link-card" href="https://mousectrl.com/mousepads" target="_blank" rel="noopener" data-desc="Comparatif et guide d'achat de tapis de souris gaming — surface, vitesse, taille et revêtement." data-tags="tapis,souris,gaming" style="--glow-color:var(--c-hard);--shadow-color:rgba(255,140,66,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=mousectrl.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🖱️</div><span class="card-badge">tapis</span></div>
+          <span class="card-name">MouseCtrl</span>
+          <span class="card-host">mousectrl.com</span>
+        </a>
+        <a class="link-card" href="https://pcie-simulator.vercel.app/" target="_blank" rel="noopener" data-desc="Simulateur PCIe interactif — visualise les lanes, la bande passante et la compatibilité des slots." data-tags="pcie,pc,motherboard" style="--glow-color:var(--c-hard);--shadow-color:rgba(255,140,66,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=pcie-simulator.vercel.app&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🔌</div><span class="card-badge">PCIe</span></div>
+          <span class="card-name">PCIe Simulator</span>
+          <span class="card-host">pcie-simulator.vercel.app</span>
+        </a>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- MES PROJETS -->
-  <section class="cat-section" data-id="perso" id="s-perso">
-    <div class="cat-header">
-      <span class="cat-accent-bar" style="background:var(--c-perso)"></span>
-      <h2 class="cat-title">Mes projets</h2>
-      <span class="cat-count" id="cnt-perso"></span>
+  <!-- ══ STEAM ══ -->
+  <div class="cat-row" data-id="steam" id="s-steam">
+    <div class="row-header">
+      <span class="row-color-bar" style="background:var(--c-steam);box-shadow:0 0 8px var(--c-steam)"></span>
+      <span class="row-title">Steam</span>
+      <span class="row-count" id="cnt-steam"></span>
     </div>
-    <div class="sub-grid wide">
-      <div class="sub-block" style="border-color:rgba(252,211,77,0.15)">
-        <div class="sub-label" style="color:rgba(252,211,77,0.4)">Apps perso</div>
-        <a class="link-item personal" href="https://wassimel.github.io/LoL-duel-and-team-build/" target="_blank" rel="noopener"
-           data-desc="Outil LoL perso — duel de champions et composition d'équipe pour préparer ses parties." data-tags="lol,tool,perso">
-          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=wassimel.github.io&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">⚔️</span>LoL Duel + Team Build<span class="star-badge">github pages</span></a>
-        <a class="link-item personal" href="https://stockit-drab.vercel.app/" target="_blank" rel="noopener"
-           data-desc="StockIt — application perso de gestion de stock." data-tags="stock,gestion,perso">
-          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=stockit-drab.vercel.app&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">📦</span>StockIt<span class="star-badge">vercel</span></a>
-        <a class="link-item personal" href="https://booster-open.vercel.app/" target="_blank" rel="noopener"
-           data-desc="BoosterGooner — simulateur d'ouverture de boosters Pokémon TCG avec animations et collection." data-tags="pokemon,tcg,booster,simulator">
-          <img class="link-favicon" src="https://www.google.com/s2/favicons?domain=booster-open.vercel.app&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">🃏</span>BoosterGooner<span class="star-badge">vercel</span></a>
+    <div class="row-track">
 
+      <div class="sub-pill">
+        <span class="sub-pill-label">Outils</span>
+        <a class="link-card" href="https://steambrew.app/" target="_blank" rel="noopener" data-desc="Millenium — client Steam moddé avec thèmes et plugins, remplaçant de SFP." data-tags="steam,thèmes,mods,client" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=steambrew.app&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎨</div><span class="card-badge">mods</span></div>
+          <span class="card-name">SteamBrew – Millenium</span>
+          <span class="card-host">steambrew.app</span>
+        </a>
+        <a class="link-card" href="https://github.com/Depressurizer/Depressurizer" target="_blank" rel="noopener" data-desc="Gestionnaire de bibliothèque Steam — trie et catégorise automatiquement tes jeux par genre, tags." data-tags="steam,library,organisation" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=github.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🏷️</div><span class="card-badge">lib</span></div>
+          <span class="card-name">Depressurizer</span>
+          <span class="card-host">github.com</span>
+        </a>
+        <a class="link-card" href="https://steamdb.info/" target="_blank" rel="noopener" data-desc="Base de données Steam complète — historique des prix, packages, builds et infos cachées." data-tags="steam,db,prix,historique" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=steamdb.info&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🗄️</div><span class="card-badge">DB</span></div>
+          <span class="card-name">SteamDB</span>
+          <span class="card-host">steamdb.info</span>
+        </a>
+        <a class="link-card" href="https://steamstat.us/" target="_blank" rel="noopener" data-desc="Statut en temps réel des serveurs Steam — voir si Steam est down ou si c'est ton côté." data-tags="steam,status,serveurs" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=steamstat.us&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📡</div><span class="card-badge">status</span></div>
+          <span class="card-name">SteamStatus</span>
+          <span class="card-host">steamstat.us</span>
+        </a>
+      </div>
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Découverte &amp; Stats</span>
+        <a class="link-card" href="https://steamladder.com/" target="_blank" rel="noopener" data-desc="Classement Steam mondial et par pays — compare ta valeur de bibliothèque et tes achievements." data-tags="steam,ranking,stats" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=steamladder.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🏆</div><span class="card-badge">rank</span></div>
+          <span class="card-name">SteamLadder</span>
+          <span class="card-host">steamladder.com</span>
+        </a>
+        <a class="link-card" href="https://steampeek.hu/" target="_blank" rel="noopener" data-desc="Découverte de jeux Steam — trouve des jeux similaires à ce que tu aimes, filtres avancés." data-tags="steam,découverte,similaire" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=steampeek.hu&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🔍</div><span class="card-badge">discover</span></div>
+          <span class="card-name">Steampeek</span>
+          <span class="card-host">steampeek.hu</span>
+        </a>
+        <a class="link-card" href="https://nodal.gg/" target="_blank" rel="noopener" data-desc="Trouve des jeux similaires à n'importe quel titre — moteur de recommandation basé sur les tags Steam." data-tags="steam,similaire,recommandation" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=nodal.gg&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🔗</div><span class="card-badge">similar</span></div>
+          <span class="card-name">Nodal</span>
+          <span class="card-host">nodal.gg</span>
+        </a>
+        <a class="link-card" href="https://www.letsplayindex.com/" target="_blank" rel="noopener" data-desc="Index de let's plays — trouve des vidéos de gameplay pour n'importe quel jeu, par créateur ou plateforme." data-tags="lets play,youtube,gameplay" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=letsplayindex.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎬</div><span class="card-badge">video</span></div>
+          <span class="card-name">Let's Play Index</span>
+          <span class="card-host">letsplayindex.com</span>
+        </a>
+        <a class="link-card" href="https://howlongtobeat.com/" target="_blank" rel="noopener" data-desc="Durée de vie des jeux — combien d'heures pour finir l'histoire, à 100%, ou en speedrun." data-tags="durée,hltb,completion" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=howlongtobeat.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">⏱️</div><span class="card-badge">durée</span></div>
+          <span class="card-name">HowLongToBeat</span>
+          <span class="card-host">howlongtobeat.com</span>
+        </a>
+        <a class="link-card" href="https://backloggd.com/" target="_blank" rel="noopener" data-desc="Suivi de ta bibliothèque de jeux — backlog, wishlist, notes et journal de gaming social." data-tags="backlog,gaming,suivi,social" style="--glow-color:var(--c-steam);--shadow-color:rgba(139,143,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=backloggd.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📝</div><span class="card-badge">backlog</span></div>
+          <span class="card-name">Backloggd</span>
+          <span class="card-host">backloggd.com</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ OUTILS ══ -->
+  <div class="cat-row" data-id="outils" id="s-outils">
+    <div class="row-header">
+      <span class="row-color-bar" style="background:var(--c-outil);box-shadow:0 0 8px var(--c-outil)"></span>
+      <span class="row-title">Outils</span>
+      <span class="row-count" id="cnt-outils"></span>
+    </div>
+    <div class="row-track">
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Édition graphique</span>
+        <a class="link-card" href="https://www.photopea.com/" target="_blank" rel="noopener" data-desc="Photoshop gratuit dans le navigateur — supporte les fichiers PSD, XCF, Sketch et plus." data-tags="photoshop,édition,psd,gratuit" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=photopea.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🖼️</div><span class="card-badge">PSD</span></div>
+          <span class="card-name">Photopea</span>
+          <span class="card-host">photopea.com</span>
+        </a>
+        <a class="link-card" href="https://www.canva.com/fr_be/" target="_blank" rel="noopener" data-desc="Outil de design graphique en ligne — templates, présentations, posts réseaux sociaux et plus." data-tags="design,templates,graphisme" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=canva.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🖌️</div><span class="card-badge">design</span></div>
+          <span class="card-name">Canva</span>
+          <span class="card-host">canva.com</span>
+        </a>
+        <a class="link-card" href="https://pixlr.com/fr/" target="_blank" rel="noopener" data-desc="Éditeur photo en ligne avec IA — retouche, collages, effets et suppression d'arrière-plan." data-tags="photo,édition,ia" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=pixlr.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">✨</div><span class="card-badge">IA</span></div>
+          <span class="card-name">Pixlr</span>
+          <span class="card-host">pixlr.com</span>
+        </a>
+        <a class="link-card" href="https://stamplab.javii.tools/" target="_blank" rel="noopener" data-desc="Crée de faux affichages de messages (Discord, SMS, etc.) en PNG — idéal pour les montages et memes." data-tags="montage,faux,messages,png" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=javii.tools&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">💬</div><span class="card-badge">PNG</span></div>
+          <span class="card-name">StampLab</span>
+          <span class="card-host">javii.tools</span>
+        </a>
+        <a class="link-card" href="https://www.flaticon.com/fr/" target="_blank" rel="noopener" data-desc="La plus grande base d'icônes gratuites — millions d'icônes PNG, SVG et police d'icônes, par packs et styles." data-tags="icônes,icons,svg,png,design,gratuit" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=flaticon.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎨</div><span class="card-badge">SVG</span></div>
+          <span class="card-name">Flaticon</span>
+          <span class="card-host">flaticon.com</span>
+        </a>
+      </div>
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Audio</span>
+        <a class="link-card" href="https://vocalremover.org/fr/" target="_blank" rel="noopener" data-desc="Sépare les voix de la musique avec l'IA — extrait instrumentales, stems et voix en quelques secondes." data-tags="audio,vocal,stems,ia" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=vocalremover.org&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎙️</div><span class="card-badge">IA</span></div>
+          <span class="card-name">Vocal Remover</span>
+          <span class="card-host">vocalremover.org</span>
+        </a>
+      </div>
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Gaming</span>
+        <a class="link-card" href="https://csgoskins.gg/" target="_blank" rel="noopener" data-desc="Marché CS2 — prix des skins en temps réel, historique, wear et comparaisons entre plateformes." data-tags="cs2,skins,marché,prix" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=csgoskins.gg&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🔫</div><span class="card-badge">market</span></div>
+          <span class="card-name">CS2 Market</span>
+          <span class="card-host">csgoskins.gg</span>
+        </a>
+        <a class="link-card" href="https://cs2inspects.com/fr" target="_blank" rel="noopener" data-desc="Inspecte et prévisualise n'importe quel skin CS2 en jeu — teste des crafts et combos personnalisés." data-tags="cs2,skins,inspect,craft" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=cs2inspects.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🔍</div><span class="card-badge">inspect</span></div>
+          <span class="card-name">CS2 Inspects</span>
+          <span class="card-host">cs2inspects.com</span>
+        </a>
+        <a class="link-card" href="https://cs2points.com/?ref=76561198117831929" target="_blank" rel="noopener" data-desc="Gagne des skins CS2 et cartes cadeaux gratuitement en complétant des petites tâches ou regardant des vidéos." data-tags="cs2,skins,gratuit,points" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=cs2points.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎁</div><span class="card-badge">free</span></div>
+          <span class="card-name">CS2 Points</span>
+          <span class="card-host">cs2points.com</span>
+        </a>
+      </div>
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Utilitaires</span>
+        <a class="link-card" href="https://humanbenchmark.com/" target="_blank" rel="noopener" data-desc="Tests de performance humaine — temps de réaction, mémoire, frappe, vision et plus." data-tags="benchmark,réaction,tests" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=humanbenchmark.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🧠</div><span class="card-badge">test</span></div>
+          <span class="card-name">HumanBenchmark</span>
+          <span class="card-host">humanbenchmark.com</span>
+        </a>
+        <a class="link-card" href="https://downdetector.fr/" target="_blank" rel="noopener" data-desc="Détecte les pannes de services en temps réel — Steam, Discord, PSN, banques et plus." data-tags="panne,status,services" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=downdetector.fr&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📶</div><span class="card-badge">status</span></div>
+          <span class="card-name">Downdetector</span>
+          <span class="card-host">downdetector.fr</span>
+        </a>
+        <a class="link-card" href="https://pimeyes.com/en" target="_blank" rel="noopener" data-desc="Moteur de recherche faciale inversée — trouve où une photo de visage apparaît sur internet." data-tags="visage,recherche,image,ia" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=pimeyes.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">👁️</div><span class="card-badge">facial</span></div>
+          <span class="card-name">PimEyes</span>
+          <span class="card-host">pimeyes.com</span>
+        </a>
+        <a class="link-card" href="https://www.dealabs.com/" target="_blank" rel="noopener" data-desc="Communauté de bons plans — promos, codes promo et ventes flash signalées par les membres." data-tags="promos,deals,bons plans" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=dealabs.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">💸</div><span class="card-badge">deals</span></div>
+          <span class="card-name">Dealabs</span>
+          <span class="card-host">dealabs.com</span>
+        </a>
+        <a class="link-card" href="https://delphi.tools/" target="_blank" rel="noopener" data-desc="Collection d'outils navigateur privacy-first — QR, palettes, suppression de fond, recadrage réseaux sociaux." data-tags="outils,navigateur,design,privacy,qr" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=delphi.tools&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🛠️</div><span class="card-badge">privacy</span></div>
+          <span class="card-name">Delphi Tools</span>
+          <span class="card-host">delphi.tools</span>
+        </a>
+      </div>
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Lifestyle</span>
+        <a class="link-card" href="https://www.shopyourtv.com/" target="_blank" rel="noopener" data-desc="Trouve les vêtements et objets vus dans les séries TV et films — identifie et achète directement." data-tags="séries,mode,shopping,tv" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=shopyourtv.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📺</div><span class="card-badge">TV</span></div>
+          <span class="card-name">ShopYourTv</span>
+          <span class="card-host">shopyourtv.com</span>
+        </a>
+        <a class="link-card" href="https://www.startmycar.com/" target="_blank" rel="noopener" data-desc="Guide pour démarrer et entretenir sa voiture — tutoriels et conseils mécaniques en vidéo." data-tags="voiture,tutoriels,mécanique" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=startmycar.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🚗</div><span class="card-badge">auto</span></div>
+          <span class="card-name">StartMyCar</span>
+          <span class="card-host">startmycar.com</span>
+        </a>
+        <a class="link-card" href="https://librivox.org/search?primary_key=0&search_category=author&search_page=1&search_form=get_results&search_order=alpha" target="_blank" rel="noopener" data-desc="Livres audio gratuits du domaine public lus par des bénévoles — milliers de titres disponibles." data-tags="livres,audio,gratuit" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=librivox.org&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎧</div><span class="card-badge">audio</span></div>
+          <span class="card-name">LibriVox</span>
+          <span class="card-host">librivox.org</span>
+        </a>
+        <a class="link-card" href="https://www.whosampled.com/" target="_blank" rel="noopener" data-desc="Découvre les samples, covers et remixes — trace les connexions entre plus de 315 000 chansons." data-tags="musique,samples,covers,remix" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=whosampled.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎵</div><span class="card-badge">music</span></div>
+          <span class="card-name">WhoSampled</span>
+          <span class="card-host">whosampled.com</span>
+        </a>
+      </div>
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Rewards</span>
+        <a class="link-card" href="https://www.ipsosisay.com/" target="_blank" rel="noopener" data-desc="Sondages rémunérés par Ipsos — réponds à des enquêtes et gagne des points échangeables." data-tags="sondages,rémunéré,rewards,ipsos" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=ipsosisay.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📊</div><span class="card-badge">survey</span></div>
+          <span class="card-name">Ipsos iSay</span>
+          <span class="card-host">ipsosisay.com</span>
+        </a>
+        <a class="link-card" href="https://www.swagbucks.com/p/login?lang=fr" target="_blank" rel="noopener" data-desc="Plateforme de récompenses — gagne des SB en faisant des achats, sondages, vidéos et jeux." data-tags="rewards,cashback,cartes cadeaux" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=swagbucks.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">💰</div><span class="card-badge">earn</span></div>
+          <span class="card-name">Swagbucks</span>
+          <span class="card-host">swagbucks.com</span>
+        </a>
+        <a class="link-card" href="https://freecash.com/r/gagner_de_largent" target="_blank" rel="noopener" data-desc="Gagne de l'argent réel ou des crypto en complétant des offres, sondages et tâches — retraits rapides." data-tags="rewards,argent,crypto,offres" style="--glow-color:var(--c-outil);--shadow-color:rgba(0,229,160,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=freecash.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">💵</div><span class="card-badge">cash</span></div>
+          <span class="card-name">FreeCash</span>
+          <span class="card-host">freecash.com</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MES PROJETS ══ -->
+  <div class="cat-row" data-id="perso" id="s-perso">
+    <div class="row-header">
+      <span class="row-color-bar" style="background:var(--c-perso);box-shadow:0 0 8px var(--c-perso)"></span>
+      <span class="row-title">Mes projets</span>
+      <span class="row-count" id="cnt-perso"></span>
+    </div>
+    <div class="row-track">
+      <div class="sub-pill">
+        <span class="sub-pill-label">Apps perso</span>
+        <a class="link-card personal" href="https://wassimel.github.io/LoL-duel-and-team-build/" target="_blank" rel="noopener" data-desc="Outil LoL perso — duel de champions et composition d'équipe pour préparer ses parties." data-tags="lol,tool,perso">
+          <span class="card-star">⭐</span>
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=wassimel.github.io&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">⚔️</div><span class="card-badge">LoL</span></div>
+          <span class="card-name">LoL Duel + Team Build</span>
+          <span class="card-host">github.io</span>
+        </a>
+        <a class="link-card personal" href="https://stockit-drab.vercel.app/" target="_blank" rel="noopener" data-desc="StockIt — application perso de gestion de stock." data-tags="stock,gestion,perso">
+          <span class="card-star">⭐</span>
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=stockit-drab.vercel.app&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📦</div><span class="card-badge">stock</span></div>
+          <span class="card-name">StockIt</span>
+          <span class="card-host">vercel.app</span>
+        </a>
+        <a class="link-card personal" href="https://booster-open.vercel.app/" target="_blank" rel="noopener" data-desc="BoosterGooner — simulateur d'ouverture de boosters Pokémon TCG avec animations et collection." data-tags="pokemon,tcg,booster,simulator">
+          <span class="card-star">⭐</span>
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=booster-open.vercel.app&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🃏</div><span class="card-badge">TCG</span></div>
+          <span class="card-name">BoosterGooner</span>
+          <span class="card-host">vercel.app</span>
+        </a>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- EXTENSIONS -->
-  <section class="cat-section" data-id="ext" id="s-ext">
-    <div class="cat-header">
-      <span class="cat-accent-bar" style="background:var(--c-ext)"></span>
-      <h2 class="cat-title">Extensions</h2>
-      <span class="cat-count" id="cnt-ext"></span>
+  <!-- ══ PLUS ══ -->
+  <div class="cat-row" data-id="plus" id="s-plus">
+    <div class="row-header">
+      <span class="row-color-bar" style="background:#38BDF8;box-shadow:0 0 8px #38BDF8"></span>
+      <span class="row-title">Plus</span>
+      <span class="row-count" id="cnt-plus"></span>
     </div>
-    <div class="sub-grid">
-      <div class="sub-block">
-        <div class="sub-label">Chrome Web Store</div>
-        <a class="link-item" href="https://chromewebstore.google.com/detail/faststream-video-player/kkeakohpadmbldjaiggikmnldlfkdfog" target="_blank" rel="noopener"
-           data-desc="Lecteur vidéo universel — remplace les players natifs avec contrôle de vitesse, raccourcis et plus." data-tags="vidéo,player,streaming"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=chromewebstore.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">▶️</span>FastStream</a>
-        <a class="link-item" href="https://chromewebstore.google.com/detail/return-youtube-dislike/gebbhagfogifgggkldgodflihgfeippi" target="_blank" rel="noopener"
-           data-desc="Restaure le compteur de dislikes YouTube — affiche les données estimées via une API communautaire." data-tags="youtube,dislikes,extension"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=chromewebstore.google.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">👎</span>Return YouTube Dislike</a>
-        <a class="link-item" href="https://fr.igraal.com/parrainage?parrain=AG_599dd29e08cd5&utm_medium=raf&utm_source=refer_friend" target="_blank" rel="noopener"
-           data-desc="Cashback et codes promo automatiques lors de tes achats en ligne — installe l'extension et économise." data-tags="cashback,promo,shopping"><img class="link-favicon" src="https://www.google.com/s2/favicons?domain=igraal.com&sz=32" onerror="this.classList.add('err')"><span class="link-emoji-fb">💰</span>IGraal</a>
+    <div class="row-track">
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Suivi & Collections</span>
+        <a class="link-card" href="https://letterboxd.com/" target="_blank" rel="noopener" data-desc="Réseau social de cinéphiles — journal de films, notes, listes et critiques. Le Goodreads du ciné." data-tags="films,journal,social" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=letterboxd.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎞️</div><span class="card-badge">social</span></div>
+          <span class="card-name">Letterboxd</span>
+          <span class="card-host">letterboxd.com</span>
+        </a>
+        <a class="link-card" href="https://backloggd.com/" target="_blank" rel="noopener" data-desc="Suivi de ta bibliothèque de jeux — backlog, wishlist, notes et journal de gaming social." data-tags="backlog,gaming,suivi" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=backloggd.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📝</div><span class="card-badge">backlog</span></div>
+          <span class="card-name">Backloggd</span>
+          <span class="card-host">backloggd.com</span>
+        </a>
+        <a class="link-card" href="https://howlongtobeat.com/" target="_blank" rel="noopener" data-desc="Durée de vie des jeux — combien d'heures pour finir l'histoire, à 100%, ou en speedrun." data-tags="durée,hltb,completion" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=howlongtobeat.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">⏱️</div><span class="card-badge">durée</span></div>
+          <span class="card-name">HowLongToBeat</span>
+          <span class="card-host">howlongtobeat.com</span>
+        </a>
+      </div>
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Musique</span>
+        <a class="link-card" href="https://www.whosampled.com/" target="_blank" rel="noopener" data-desc="Découvre les samples, covers et remixes — trace les connexions entre plus de 315 000 chansons." data-tags="musique,samples,covers,remix" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=whosampled.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎵</div><span class="card-badge">music</span></div>
+          <span class="card-name">WhoSampled</span>
+          <span class="card-host">whosampled.com</span>
+        </a>
+        <a class="link-card" href="https://vocalremover.org/fr/" target="_blank" rel="noopener" data-desc="Sépare les voix de la musique avec l'IA — extrait instrumentales, stems et voix en quelques secondes." data-tags="audio,vocal,stems,ia" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=vocalremover.org&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎙️</div><span class="card-badge">IA</span></div>
+          <span class="card-name">Vocal Remover</span>
+          <span class="card-host">vocalremover.org</span>
+        </a>
+      </div>
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Lifestyle</span>
+        <a class="link-card" href="https://www.shopyourtv.com/" target="_blank" rel="noopener" data-desc="Trouve les vêtements et objets vus dans les séries TV et films — identifie et achète directement." data-tags="séries,mode,shopping,tv" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=shopyourtv.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📺</div><span class="card-badge">TV</span></div>
+          <span class="card-name">ShopYourTv</span>
+          <span class="card-host">shopyourtv.com</span>
+        </a>
+        <a class="link-card" href="https://www.startmycar.com/" target="_blank" rel="noopener" data-desc="Guide pour démarrer et entretenir sa voiture — tutoriels et conseils mécaniques en vidéo." data-tags="voiture,tutoriels,mécanique" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=startmycar.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🚗</div><span class="card-badge">auto</span></div>
+          <span class="card-name">StartMyCar</span>
+          <span class="card-host">startmycar.com</span>
+        </a>
+        <a class="link-card" href="https://librivox.org/search?primary_key=0&search_category=author&search_page=1&search_form=get_results&search_order=alpha" target="_blank" rel="noopener" data-desc="Livres audio gratuits du domaine public lus par des bénévoles — milliers de titres disponibles." data-tags="livres,audio,gratuit" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=librivox.org&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🎧</div><span class="card-badge">audio</span></div>
+          <span class="card-name">LibriVox</span>
+          <span class="card-host">librivox.org</span>
+        </a>
+        <a class="link-card" href="https://www.dealabs.com/" target="_blank" rel="noopener" data-desc="Communauté de bons plans — promos, codes promo et ventes flash signalées par les membres." data-tags="promos,deals,bons plans" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=dealabs.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">💸</div><span class="card-badge">deals</span></div>
+          <span class="card-name">Dealabs</span>
+          <span class="card-host">dealabs.com</span>
+        </a>
+        <a class="link-card" href="https://pimeyes.com/en" target="_blank" rel="noopener" data-desc="Moteur de recherche faciale inversée — trouve où une photo de visage apparaît sur internet." data-tags="visage,recherche,image,ia" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=pimeyes.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">👁️</div><span class="card-badge">facial</span></div>
+          <span class="card-name">PimEyes</span>
+          <span class="card-host">pimeyes.com</span>
+        </a>
+        <a class="link-card" href="https://humanbenchmark.com/" target="_blank" rel="noopener" data-desc="Tests de performance humaine — temps de réaction, mémoire, frappe, vision et plus." data-tags="benchmark,réaction,tests" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=humanbenchmark.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">🧠</div><span class="card-badge">test</span></div>
+          <span class="card-name">HumanBenchmark</span>
+          <span class="card-host">humanbenchmark.com</span>
+        </a>
+        <a class="link-card" href="https://downdetector.fr/" target="_blank" rel="noopener" data-desc="Détecte les pannes de services en temps réel — Steam, Discord, PSN, banques et plus." data-tags="panne,status,services" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=downdetector.fr&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📶</div><span class="card-badge">status</span></div>
+          <span class="card-name">Downdetector</span>
+          <span class="card-host">downdetector.fr</span>
+        </a>
+      </div>
+
+      <div class="sub-pill">
+        <span class="sub-pill-label">Rewards</span>
+        <a class="link-card" href="https://www.ipsosisay.com/" target="_blank" rel="noopener" data-desc="Sondages rémunérés par Ipsos — réponds à des enquêtes et gagne des points échangeables." data-tags="sondages,rewards,ipsos" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=ipsosisay.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">📊</div><span class="card-badge">survey</span></div>
+          <span class="card-name">Ipsos iSay</span>
+          <span class="card-host">ipsosisay.com</span>
+        </a>
+        <a class="link-card" href="https://www.swagbucks.com/p/login?lang=fr" target="_blank" rel="noopener" data-desc="Plateforme de récompenses — gagne des SB en faisant des achats, sondages, vidéos et jeux." data-tags="rewards,cashback,cartes cadeaux" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=swagbucks.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">💰</div><span class="card-badge">earn</span></div>
+          <span class="card-name">Swagbucks</span>
+          <span class="card-host">swagbucks.com</span>
+        </a>
+        <a class="link-card" href="https://freecash.com/r/gagner_de_largent" target="_blank" rel="noopener" data-desc="Gagne de l'argent réel ou des crypto en complétant des offres, sondages et tâches." data-tags="rewards,argent,crypto" style="--glow-color:#38BDF8;--shadow-color:rgba(56,189,248,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=freecash.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">💵</div><span class="card-badge">cash</span></div>
+          <span class="card-name">FreeCash</span>
+          <span class="card-host">freecash.com</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ EXTENSIONS ══ -->
+  <div class="cat-row" data-id="ext" id="s-ext">
+    <div class="row-header">
+      <span class="row-color-bar" style="background:var(--c-ext);box-shadow:0 0 8px var(--c-ext)"></span>
+      <span class="row-title">Extensions</span>
+      <span class="row-count" id="cnt-ext"></span>
+    </div>
+    <div class="row-track">
+      <div class="sub-pill">
+        <span class="sub-pill-label">Chrome Web Store</span>
+        <a class="link-card" href="https://chromewebstore.google.com/detail/faststream-video-player/kkeakohpadmbldjaiggikmnldlfkdfog" target="_blank" rel="noopener" data-desc="Lecteur vidéo universel — remplace les players natifs avec contrôle de vitesse, raccourcis et plus." data-tags="vidéo,player,streaming" style="--glow-color:var(--c-ext);--shadow-color:rgba(204,126,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=chromewebstore.google.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">▶️</div><span class="card-badge">vidéo</span></div>
+          <span class="card-name">FastStream</span>
+          <span class="card-host">chromewebstore.google.com</span>
+        </a>
+        <a class="link-card" href="https://chromewebstore.google.com/detail/return-youtube-dislike/gebbhagfogifgggkldgodflihgfeippi" target="_blank" rel="noopener" data-desc="Restaure le compteur de dislikes YouTube — affiche les données estimées via une API communautaire." data-tags="youtube,dislikes,extension" style="--glow-color:var(--c-ext);--shadow-color:rgba(204,126,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=chromewebstore.google.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">👎</div><span class="card-badge">YT</span></div>
+          <span class="card-name">Return YouTube Dislike</span>
+          <span class="card-host">chromewebstore.google.com</span>
+        </a>
+        <a class="link-card" href="https://fr.igraal.com/parrainage?parrain=AG_599dd29e08cd5&utm_medium=raf&utm_source=refer_friend" target="_blank" rel="noopener" data-desc="Cashback et codes promo automatiques lors de tes achats en ligne — installe l'extension et économise." data-tags="cashback,promo,shopping" style="--glow-color:var(--c-ext);--shadow-color:rgba(204,126,255,0.2)">
+          <div class="card-top"><img class="card-favicon" src="https://www.google.com/s2/favicons?domain=igraal.com&sz=64" onerror="this.classList.add('err')"><div class="card-favicon-fb">💰</div><span class="card-badge">cash</span></div>
+          <span class="card-name">IGraal</span>
+          <span class="card-host">igraal.com</span>
+        </a>
       </div>
     </div>
-  </section>
+  </div>
 
   <div class="empty-state" id="empty">
     <span class="empty-glyph">∅</span>
@@ -594,131 +1007,289 @@ nav {
 </div>
 
 <script>
-const SECTIONS = ['jeux','films','hardware','steam','outils','perso','ext'];
+/* ══════════════════════════════════════════
+   AURORA — vanilla WebGL (no deps)
+   Colors: bleu/violet to match bleu nuit bg
+══════════════════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('aurora-canvas');
+  const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: true });
+  if (!gl) return;
+
+  gl.clearColor(0,0,0,0);
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+  const VERT = `#version 300 es
+in vec2 position;
+void main() { gl_Position = vec4(position, 0.0, 1.0); }`;
+
+  const FRAG = `#version 300 es
+precision highp float;
+uniform float uTime;
+uniform float uAmplitude;
+uniform vec3 uColorStops[3];
+uniform vec2 uResolution;
+uniform float uBlend;
+out vec4 fragColor;
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x,289.0); }
+float snoise(vec2 v){
+  const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);
+  vec2 i=floor(v+dot(v,C.yy));
+  vec2 x0=v-i+dot(i,C.xx);
+  vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);
+  vec4 x12=x0.xyxy+C.xxzz;
+  x12.xy-=i1;
+  i=mod(i,289.0);
+  vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));
+  vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);
+  m=m*m; m=m*m;
+  vec3 x=2.0*fract(p*C.www)-1.0;
+  vec3 h=abs(x)-0.5;
+  vec3 ox=floor(x+0.5);
+  vec3 a0=x-ox;
+  m*=1.79284291400159-0.85373472095314*(a0*a0+h*h);
+  vec3 g;
+  g.x=a0.x*x0.x+h.x*x0.y;
+  g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+  return 130.0*dot(m,g);
+}
+
+struct ColorStop { vec3 color; float position; };
+
+void main(){
+  vec2 uv=gl_FragCoord.xy/uResolution;
+  ColorStop colors[3];
+  colors[0]=ColorStop(uColorStops[0],0.0);
+  colors[1]=ColorStop(uColorStops[1],0.5);
+  colors[2]=ColorStop(uColorStops[2],1.0);
+
+  int index=0;
+  for(int i=0;i<2;i++){
+    if(colors[i].position<=uv.x) index=i;
+  }
+  ColorStop cur=colors[index];
+  ColorStop nxt=colors[index+1];
+  float rng=nxt.position-cur.position;
+  float lf=(uv.x-cur.position)/rng;
+  vec3 rampColor=mix(cur.color,nxt.color,lf);
+
+  float height=snoise(vec2(uv.x*2.0+uTime*0.1,uTime*0.25))*0.5*uAmplitude;
+  height=exp(height);
+  height=(uv.y*2.0-height+0.2);
+  float intensity=0.6*height;
+  float midPoint=0.20;
+  float auroraAlpha=smoothstep(midPoint-uBlend*0.5,midPoint+uBlend*0.5,intensity);
+  vec3 auroraColor=intensity*rampColor;
+  fragColor=vec4(auroraColor*auroraAlpha,auroraAlpha);
+}`;
+
+  function compileShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, compileShader(gl.VERTEX_SHADER, VERT));
+  gl.attachShader(prog, compileShader(gl.FRAGMENT_SHADER, FRAG));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  // Full-screen triangle
+  const vao = gl.createVertexArray();
+  gl.bindVertexArray(vao);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(prog, 'position');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  // Uniforms
+  const uTime       = gl.getUniformLocation(prog, 'uTime');
+  const uAmplitude  = gl.getUniformLocation(prog, 'uAmplitude');
+  const uColorStops = gl.getUniformLocation(prog, 'uColorStops');
+  const uResolution = gl.getUniformLocation(prog, 'uResolution');
+  const uBlend      = gl.getUniformLocation(prog, 'uBlend');
+
+  // Aurora colors — violet / bleu ciel / indigo pour coller au bleu nuit
+  const COLOR_STOPS = ['#3B1FCC', '#00AAFF', '#6B22E8'];
+
+  function hexToRgb(hex) {
+    const r = parseInt(hex.slice(1,3),16)/255;
+    const g = parseInt(hex.slice(3,5),16)/255;
+    const b = parseInt(hex.slice(5,7),16)/255;
+    return [r,g,b];
+  }
+
+  function resize() {
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    gl.viewport(0,0,canvas.width,canvas.height);
+    gl.uniform2f(uResolution, canvas.width, canvas.height);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const flat = COLOR_STOPS.flatMap(hexToRgb);
+  gl.uniform3fv(uColorStops, flat);
+  gl.uniform1f(uAmplitude, 1.1);
+  gl.uniform1f(uBlend, 0.42);
+
+  function render(t) {
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.uniform1f(uTime, t * 0.0002 * 0.2);
+    gl.bindVertexArray(vao);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    requestAnimationFrame(render);
+  }
+  requestAnimationFrame(render);
+})();
+
+/* ══════════════════════════════════════════
+   APP LOGIC
+══════════════════════════════════════════ */
+const SECTIONS = ['jeux','films','hardware','steam','outils','perso','plus','ext'];
+let currentTab = 'all';
 
 function updateCounts() {
   let total = 0;
   SECTIONS.forEach(id => {
-    const n = document.querySelectorAll(`#s-${id} .link-item`).length;
+    const n = document.querySelectorAll(`#s-${id} .link-card`).length;
     total += n;
     const el = document.getElementById(`cnt-${id}`);
     if (el) el.textContent = n + ' liens';
   });
-  document.getElementById('total').textContent = total;
+  document.getElementById('meta-count').textContent = total + ' liens';
 }
 
 function setTab(id) {
+  currentTab = id;
+  // sync both nav-tabs AND any chip-style tabs
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.id === id));
+  // show/hide sections
   SECTIONS.forEach(sid => {
     const sec = document.getElementById(`s-${sid}`);
     if (!sec) return;
     (id === 'all' || sid === id) ? sec.removeAttribute('hidden') : sec.setAttribute('hidden','');
   });
+  // clear search
   const s = document.getElementById('search');
-  if (s.value) { s.value = ''; doSearch(''); }
+  if (s.value) {
+    s.value = '';
+    // reset all cards dim state
+    document.querySelectorAll('.link-card').forEach(c => c.classList.remove('dim'));
+    document.getElementById('empty').classList.remove('show');
+    updateCounts();
+  }
+  // scroll top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function doSearch(val) {
   const term = val.trim().toLowerCase();
   let vis = 0;
+
+  // when searching, show all sections regardless of tab
   SECTIONS.forEach(id => {
     const sec = document.getElementById(`s-${id}`);
     if (!sec) return;
-    sec.removeAttribute('hidden');
-    let sv = 0;
-    sec.querySelectorAll('.link-item').forEach(a => {
-      const match = !term || a.textContent.toLowerCase().includes(term)
-        || (a.dataset.tags||'').toLowerCase().includes(term)
-        || (a.dataset.desc||'').toLowerCase().includes(term);
-      a.classList.toggle('dim', !match);
-      if (match) sv++;
-    });
-    if (term && sv === 0) sec.setAttribute('hidden','');
-    vis += sv;
+
+    if (term) {
+      sec.removeAttribute('hidden');
+      let sv = 0;
+      sec.querySelectorAll('.link-card').forEach(a => {
+        const match = a.textContent.toLowerCase().includes(term)
+          || (a.dataset.tags||'').toLowerCase().includes(term)
+          || (a.dataset.desc||'').toLowerCase().includes(term);
+        a.classList.toggle('dim', !match);
+        if (match) sv++;
+      });
+      if (sv === 0) sec.setAttribute('hidden','');
+      vis += sv;
+    } else {
+      // restore tab state
+      sec.querySelectorAll('.link-card').forEach(a => a.classList.remove('dim'));
+      (currentTab === 'all' || id === currentTab) ? sec.removeAttribute('hidden') : sec.setAttribute('hidden','');
+    }
   });
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.toggle('active', t.dataset.id === 'all'));
-  const metaEl = document.getElementById('meta');
+
+  const mc = document.getElementById('meta-count');
   if (term) {
-    metaEl.innerHTML = `— <span id="total">${vis}</span> résultat${vis!==1?'s':''} pour « ${val} »`;
+    mc.textContent = `${vis} résultat${vis !== 1 ? 's' : ''}`;
   } else {
-    const total = SECTIONS.reduce((n,id)=>n+document.querySelectorAll(`#s-${id} .link-item`).length,0);
-    metaEl.innerHTML = `— <span id="total">${total}</span> liens indexés`;
+    const total = SECTIONS.reduce((n,id) => n + document.querySelectorAll(`#s-${id} .link-card`).length, 0);
+    mc.textContent = total + ' liens';
   }
   document.getElementById('empty').classList.toggle('show', !!term && vis === 0);
 }
 
 /* ── TOOLTIP ── */
-const tip     = document.getElementById('tip');
+const tip = document.getElementById('tip');
 const tipAddr = document.getElementById('tip-addr');
 const tipFav  = document.getElementById('tip-fav');
 const tipName = document.getElementById('tip-name');
 const tipHost = document.getElementById('tip-host');
 const tipDesc = document.getElementById('tip-desc');
 const tipTags = document.getElementById('tip-tags');
-const tipIcon = document.getElementById('tip-icon');
 
-let htimer = null, htide = null;
+let ht = null, hd = null;
 
-function getAccent(el) {
-  const sec = el.closest('.cat-section');
-  if (!sec) return '#818CF8';
-  const map = {jeux:'#22D3EE',films:'#F472B6',hardware:'#FB923C',steam:'#818CF8',outils:'#34D399',perso:'#FCD34D',ext:'#C084FC'};
-  return map[sec.dataset.id] || '#818CF8';
-}
-
-function showTip(e, a) {
-  const url  = a.href;
-  let cleanName = '';
-  a.childNodes.forEach(n => { if (n.nodeType === 3) cleanName += n.textContent; });
-  cleanName = cleanName.trim() || a.textContent.trim().split('\n')[0].trim();
-
+function showTip(e, card) {
+  const url  = card.href;
+  const name = card.querySelector('.card-name')?.textContent.trim() || '';
+  const desc = card.dataset.desc || '';
+  const tags = (card.dataset.tags||'').split(',').filter(Boolean);
   let host = '';
-  try { host = new URL(url).hostname.replace('www.',''); } catch(e) {}
-
-  const desc = a.dataset.desc || '';
-  const tags = (a.dataset.tags || '').split(',').filter(Boolean);
+  try { host = new URL(url).hostname.replace('www.',''); } catch(_) {}
 
   tipAddr.textContent = host;
-  tipName.textContent = cleanName;
+  tipName.textContent = name;
   tipHost.textContent = host;
   tipDesc.textContent = desc;
-
-  /* favicon — taille fixe 16px, pas de grand aperçu */
+  tipTags.innerHTML = tags.map(t=>`<span class="tip-tag">${t.trim()}</span>`).join('');
   tipFav.src = `https://www.google.com/s2/favicons?domain=${host}&sz=32`;
-  tipFav.onerror = () => { tipFav.style.display = 'none'; };
-  tipFav.onload  = () => { tipFav.style.display = 'block'; };
-
-  tipTags.innerHTML = tags.map(t => `<span class="tip-tag">${t.trim()}</span>`).join('');
+  tipFav.onerror = ()=>{ tipFav.style.display='none'; };
+  tipFav.onload  = ()=>{ tipFav.style.display='block'; };
 
   pos(e);
   tip.classList.add('show');
 }
 
 function pos(e) {
-  const W = 300, PAD = 16;
-  let x = e.clientX + 18, y = e.clientY + 18;
-  if (x + W > window.innerWidth - PAD) x = e.clientX - W - 12;
-  const H = tip.offsetHeight || 200;
-  if (y + H > window.innerHeight - PAD) y = e.clientY - H - 12;
-  tip.style.left = x + 'px';
-  tip.style.top  = y + 'px';
+  const W=260, PAD=14;
+  let x = e.clientX+16, y = e.clientY+16;
+  if (x+W > window.innerWidth-PAD) x = e.clientX-W-10;
+  const H = tip.offsetHeight||180;
+  if (y+H > window.innerHeight-PAD) y = e.clientY-H-10;
+  tip.style.left = x+'px'; tip.style.top = y+'px';
 }
 
-document.querySelectorAll('.link-item').forEach(a => {
-  a.addEventListener('mouseenter', e => {
-    clearTimeout(htide);
-    htimer = setTimeout(() => showTip(e, a), 280);
-  });
-  a.addEventListener('mousemove', e => {
-    if (tip.classList.contains('show')) pos(e);
-  });
-  a.addEventListener('mouseleave', () => {
-    clearTimeout(htimer);
-    htide = setTimeout(() => tip.classList.remove('show'), 100);
-  });
-});
-tip.addEventListener('mouseenter', () => clearTimeout(htide));
-tip.addEventListener('mouseleave', () => { htide = setTimeout(() => tip.classList.remove('show'), 100); });
+// Event delegation — works for all cards including dynamically added ones
+document.getElementById('page').addEventListener('mouseenter', e => {
+  const card = e.target.closest('.link-card');
+  if (!card || card.classList.contains('dim')) return;
+  clearTimeout(hd);
+  ht = setTimeout(() => showTip(e, card), 300);
+}, true);
+
+document.getElementById('page').addEventListener('mousemove', e => {
+  const card = e.target.closest('.link-card');
+  if (card && tip.classList.contains('show')) pos(e);
+}, true);
+
+document.getElementById('page').addEventListener('mouseleave', e => {
+  const card = e.target.closest('.link-card');
+  if (!card) return;
+  clearTimeout(ht);
+  hd = setTimeout(() => tip.classList.remove('show'), 100);
+}, true);
+
+tip.addEventListener('mouseenter', () => clearTimeout(hd));
+tip.addEventListener('mouseleave', () => { hd = setTimeout(() => tip.classList.remove('show'), 100); });
 
 updateCounts();
 </script>
